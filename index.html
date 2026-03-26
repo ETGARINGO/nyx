@@ -3,37 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NYX POSTRANO | COMMAND CENTER V5</title>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <title>Mission Accomplished | Interactive Tactical HUD</title>
     <style>
         :root { 
             --gold: #d4af37; 
             --gold-glow: rgba(212, 175, 55, 0.8);
             --bg: #050505; 
-            --police-blue: rgba(0, 51, 102, 0.2);
+            --police-blue: rgba(0, 51, 102, 0.3);
             --panel-bg: rgba(0, 15, 30, 0.9);
             --alert-red: #ff3333;
-            --font-main: 'Rajdhani', sans-serif;
-            --font-header: 'Oswald', sans-serif;
         }
 
         body, html { 
             margin: 0; padding: 0; 
             background: var(--bg); 
             color: white; 
-            font-family: var(--font-main); 
+            font-family: 'Consolas', 'Courier New', monospace; 
             overflow: hidden; 
             height: 100%; 
-        }
-
-        /* Scanline Overlay Effect */
-        body::after {
-            content: " ";
-            position: fixed; inset: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 3px, 3px 100%;
-            pointer-events: none; z-index: 999;
         }
 
         #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.3; }
@@ -67,6 +54,9 @@
             scrollbar-color: var(--gold) transparent;
         }
 
+        #sidebar::-webkit-scrollbar { width: 4px; }
+        #sidebar::-webkit-scrollbar-thumb { background: var(--gold); }
+
         .thumb-link {
             width: 100%; min-height: 100px;
             border: 1px solid var(--police-blue);
@@ -78,29 +68,24 @@
 
         .thumb-link:hover { border-color: var(--gold); transform: scale(1.02); }
         .thumb-link.active { border: 2px solid var(--gold); box-shadow: 0 0 15px var(--gold-glow); }
-        .thumb-link.hot-seat-thumb { border-color: var(--alert-red); }
         .thumb-link img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
         .thumb-link.active img { opacity: 1; }
 
         /* Remarks/Hot Seat Overlay */
         .hot-seat-overlay {
-            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+            position: absolute; top: 20px; left: 20px;
             background: var(--alert-red); color: white;
-            padding: 15px 30px; font-family: var(--font-header);
-            border: 4px solid white; box-shadow: 0 0 40px var(--alert-red);
-            text-transform: uppercase; font-size: 2.2rem; letter-spacing: 3px;
-            animation: glitch-pulse 0.4s infinite;
-            z-index: 500; display: none; text-align: center;
+            padding: 10px 20px; font-weight: bold;
+            border: 2px solid white; box-shadow: 0 0 20px var(--alert-red);
+            text-transform: uppercase; letter-spacing: 2px;
+            animation: pulse 1s infinite alternate;
+            z-index: 100; display: none;
         }
 
-        @keyframes glitch-pulse {
-            0% { transform: translateX(-50%) scale(1); filter: contrast(1); }
-            50% { transform: translateX(-51%) scale(1.05); filter: contrast(1.2); }
-            100% { transform: translateX(-49%) scale(1); filter: contrast(1); }
+        @keyframes pulse {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(1.1); opacity: 0.8; }
         }
-
-        .icon-bounce { display: inline-block; animation: bounce 0.5s infinite alternate; font-size: 2.5rem; margin: 0 10px; vertical-align: middle; }
-        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 
         /* Stage */
         #stage {
@@ -112,16 +97,19 @@
         .slide {
             position: absolute; inset: 0; opacity: 0;
             display: flex; align-items: center; justify-content: center;
-            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out; 
-            padding: 20px; pointer-events: none; transform: scale(1.1);
+            transition: opacity 0.8s ease-in-out; padding: 20px; pointer-events: none;
         }
 
-        .slide.active { opacity: 1; pointer-events: auto; transform: scale(1); }
+        .slide.active { opacity: 1; pointer-events: auto; animation: scanIn 0.6s ease-out forwards; }
+
+        @keyframes scanIn {
+            from { clip-path: inset(0 100% 0 0); }
+            to { clip-path: inset(0 0 0 0); }
+        }
 
         .slide img, .slide video {
             max-width: 95%; max-height: 85vh;
-            border: 2px solid var(--gold); box-shadow: 0 0 30px rgba(0,0,0,1);
-            background: black;
+            border: 1px solid var(--gold); box-shadow: 0 0 30px rgba(0,0,0,1);
         }
 
         /* Subtitles */
@@ -131,8 +119,7 @@
         }
 
         .subtitle-text {
-            font-family: var(--font-header);
-            font-size: 2.8rem; font-weight: 700;
+            font-size: 2.5rem; font-weight: 900;
             text-transform: uppercase; color: var(--gold);
             text-shadow: 3px 3px 0px #000; opacity: 0; transition: 0.4s;
         }
@@ -145,19 +132,19 @@
             z-index: 1000; display: flex; align-items: center; justify-content: center; 
         }
         .gate-card { 
-            text-align: center; padding: 50px; border: 1px solid var(--gold); 
-            background: var(--panel-bg); backdrop-filter: blur(10px);
-            box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
+            text-align: center; padding: 40px; border: 1px solid var(--gold); 
+            background: var(--panel-bg); 
         }
         .start-btn { 
-            background: var(--gold); padding: 15px 40px; border: none; cursor: pointer; 
-            font-family: var(--font-header); font-weight: bold; font-size: 1.5rem;
-            margin-top: 30px; letter-spacing: 5px; text-transform: uppercase;
-            transition: 0.3s;
+            background: var(--gold); padding: 10px 30px; border: none; cursor: pointer; font-weight: bold;
+            margin-top: 20px;
         }
-        .start-btn:hover { background: white; box-shadow: 0 0 20px white; }
 
-        .final-box h1 { font-family: var(--font-header); font-size: 4rem; color: var(--gold); text-shadow: 0 0 20px var(--gold); margin: 10px 0; }
+        .download-btn {
+            background: transparent; border: 1px solid var(--gold); color: var(--gold);
+            padding: 10px 20px; cursor: pointer; margin-top: 20px; transition: 0.3s;
+        }
+        .download-btn:hover { background: var(--gold); color: black; }
     </style>
 </head>
 <body>
@@ -165,14 +152,13 @@
 <div id="particles-js"></div>
 <div class="vignette"></div>
 
-<audio id="laughTrack" src="laugh-track.mp3"></audio>
 <audio id="bgMusic" src="Walking in the Wind - One Direction (Lyrics) - Little Peach (128k).mp3"></audio>
 
 <div id="gate">
     <div class="gate-card">
-        <h1 style="color: var(--gold); margin:0; font-family: 'Oswald'; font-size: 3.5rem; letter-spacing: 10px;">THE ROAST OF NYX</h1>
-        <p style="letter-spacing: 5px; opacity: 0.7;">SECTION IX PERSONNEL ARCHIVE | HOT SEAT READY</p>
-        <button class="start-btn" onclick="ignite()">INITIALIZE ROAST</button>
+        <h1 style="color: var(--gold); margin:0;">SYSTEM AUTHORIZATION</h1>
+        <p style="letter-spacing: 3px; opacity: 0.7;">ACCESSING PERSONNEL ARCHIVE: NYX POSTRANO</p>
+        <button class="start-btn" onclick="ignite()">INITIALIZE HUD</button>
     </div>
 </div>
 
@@ -180,9 +166,7 @@
     <div id="sidebar"></div>
 
     <div id="stage">
-        <div id="hotSeatTag" class="hot-seat-overlay">
-            ⚠️ <span class="icon-bounce">😂</span> BEST JUDGE EVER (HOT SEAT) <span class="icon-bounce">✌️</span> ⚠️
-        </div>
+        <div id="hotSeatTag" class="hot-seat-overlay">⚠️ BEST JUDGE EVER (HOT SEAT) ⚠️</div>
 
         <div class="slide active"><img src="1.JPG"></div>
         <div class="slide"><video src="2.MOV" muted></video></div>
@@ -204,13 +188,8 @@
         <div class="slide"><img src="18.JPG"></div>
         <div class="slide"><img src="19.JPG"></div>
         <div class="slide"><img src="20.JPG"></div>
-        
-        <div class="slide"><img src="21.JPEG"></div> 
-        <div class="slide"><img src="22.JPEG"></div>
-        <div class="slide"><img src="23.JPEG"></div> 
-        <div class="slide"><img src="24.JPEG"></div> 
-        
-        <div class="slide"><img src="25.JPG"></div>
+        <div class="slide"><img src="21.JPEG"></div> <div class="slide"><img src="22.JPEG"></div>
+        <div class="slide"><img src="23.JPEG"></div> <div class="slide"><img src="24.JPEG"></div> <div class="slide"><img src="25.JPG"></div>
         <div class="slide"><img src="26.JPG"></div>
         <div class="slide"><img src="27.JPG"></div>
         <div class="slide"><img src="28.JPG"></div>
@@ -229,9 +208,10 @@
             <div class="final-box" style="text-align: center;">
                 <p style="letter-spacing: 12px; opacity: 0.7;">STATUS: MISSION ACCOMPLISHED</p>
                 <h1>MA'AM NYX POSTRANO</h1>
-                <p style="font-style: italic; color: var(--gold);">"New Unit, Same Legend."</p>
+                <p style="font-style: italic;">"New Unit, Same Legend."</p>
                 <div style="width: 80px; height: 2px; background: var(--gold); margin: 20px auto;"></div>
                 <p>SAFE TRAVELS, MA'AM GANDA! 🫡</p>
+                <button class="download-btn" onclick="alert('Preparing high-res archive...')">DOWNLOAD CASE PHOTOS</button>
             </div>
         </div>
     </div>
@@ -246,7 +226,6 @@
     const slides = document.querySelectorAll('.slide');
     const sidebar = document.getElementById('sidebar');
     const music = document.getElementById('bgMusic');
-    const laughTrack = document.getElementById('laughTrack');
     const subtitle = document.getElementById('subtitle');
     const hotSeatTag = document.getElementById('hotSeatTag');
     let currentIdx = 0;
@@ -259,7 +238,6 @@
     slides.forEach((s, idx) => {
         const thumb = document.createElement('div');
         thumb.className = 'thumb-link';
-        if(hotSeatIndices.includes(idx)) thumb.classList.add('hot-seat-thumb');
         thumb.onclick = () => jumpTo(idx);
         
         const img = s.querySelector('img');
@@ -275,17 +253,18 @@
     const thumbs = document.querySelectorAll('.thumb-link');
 
     const lyrics = [
-        { time: 0, text: "🚨 ALERT: JUDGE NYX IN THE BUILDING 🚨" },
-        { time: 5, text: "PROCEED WITH CAUTION" },
+        { time: 0, text: "TARGET IDENTIFIED: MA'AM NYX" },
+        { time: 5, text: "PREPARE FOR EMOTIONAL BACKUP" },
         { time: 14, text: "A week ago you said to us..." },
         { time: 23, text: "If we're lost, don't call us..." },
+        { time: 26, text: "Because you're off the clock!" },
         { time: 31, text: "Transferring to a new beat" },
         { time: 46, text: "WALKING INTO THE NEW UNIT" },
         { time: 198, text: "SAFE TRAVELS, MA'AM GANDA 🫡" }
     ];
 
     particlesJS("particles-js", {
-        "particles": { "number": { "value": 60 }, "color": { "value": "#d4af37" }, "move": { "speed": 1 } }
+        "particles": { "number": { "value": 50 }, "color": { "value": "#d4af37" }, "move": { "speed": 0.8 } }
     });
 
     function ignite() {
@@ -323,8 +302,6 @@
         // Hot Seat Logic
         if (hotSeatIndices.includes(currentIdx)) {
             hotSeatTag.style.display = 'block';
-            laughTrack.currentTime = 0;
-            laughTrack.play();
         } else {
             hotSeatTag.style.display = 'none';
         }
