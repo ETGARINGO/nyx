@@ -2,69 +2,118 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Officer Surprise Party Slideshow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Surprise Presentation</title>
     <style>
-        body { margin: 0; background: #0a0a0a; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
-        .slide-container { position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        body { margin: 0; background: #000; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        #start-screen { position: fixed; inset: 0; background: radial-gradient(circle, #222, #000); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; }
+        .btn-start { padding: 20px 50px; font-size: 2rem; cursor: pointer; background: #ffd700; border: none; border-radius: 50px; font-weight: bold; box-shadow: 0 0 20px rgba(255,215,0,0.4); transition: 0.3s; }
+        .btn-start:hover { transform: scale(1.1); background: #fff; }
         
-        .slide { display: none; width: 100%; height: 100%; text-align: center; }
-        .slide.active { display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        .slide-container { position: relative; width: 100vw; height: 100vh; }
+        .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1s ease-in-out; display: flex; align-items: center; justify-content: center; }
+        .slide.active { opacity: 1; }
         
-        img, video { max-width: 95%; max-height: 85vh; border-radius: 8px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
-        
-        .controls { position: absolute; bottom: 30px; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 10; }
-        button { background: rgba(255,255,255,0.1); border: 1px solid white; color: white; padding: 10px 20px; cursor: pointer; border-radius: 5px; }
-        button:hover { background: white; color: black; }
-
-        .caption { margin-top: 15px; font-size: 1.2rem; font-weight: bold; letter-spacing: 1px; }
-        .progress { position: absolute; top: 0; left: 0; height: 4px; background: #ffd700; transition: width 0.3s; }
+        img, video { max-width: 95%; max-height: 90vh; object-fit: contain; box-shadow: 0 0 50px rgba(0,0,0,0.8); border: 2px solid #333; }
+        .caption { position: absolute; bottom: 20px; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 5px; font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
-<div class="progress" id="progressBar"></div>
+<div id="start-screen">
+    <h1 style="margin-bottom: 30px;">Officer's Special Celebration</h1>
+    <button class="btn-start" onclick="startPresentation()">START SURPRISE</button>
+</div>
+
+<audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
 
 <div class="slide-container" id="gallery">
-    <div class="slide active" data-type="img"><img src="1.JPG"><div class="caption">1.JPG</div></div>
-    <div class="slide" data-type="video"><video src="2.MOV" controls></video><div class="caption">2.MOV</div></div>
-    <div class="slide" data-type="video"><video src="3.MOV" controls></video><div class="caption">3.MOV</div></div>
-    <div class="slide" data-type="video"><video src="4.MOV" controls></video><div class="caption">4.MOV</div></div>
-    <div class="slide" data-type="img"><img src="5.JPEG"><div class="caption">5.JPEG</div></div>
-    <div class="slide" data-type="img"><img src="111.jpg"><div class="caption">Our Officer</div></div>
-    </div>
-
-<div class="controls">
-    <button onclick="changeSlide(-1)">❮ Back</button>
-    <button onclick="changeSlide(1)">Next ❯</button>
+    <div class="slide active"><img src="1.JPG"></div>
+    <div class="slide"><video src="2.MOV"></video></div>
+    <div class="slide"><video src="3.MOV"></video></div>
+    <div class="slide"><video src="4.MOV"></video></div>
+    <div class="slide"><img src="5.JPEG"></div>
+    <div class="slide"><img src="6.JPEG"></div>
+    <div class="slide"><img src="7.JPEG"></div>
+    <div class="slide"><img src="8.JPEG"></div>
+    <div class="slide"><img src="9.JPEG"></div>
+    <div class="slide"><img src="10.JPEG"></div>
+    <div class="slide"><img src="11.JPEG"></div>
+    <div class="slide"><img src="12.JPEG"></div>
+    <div class="slide"><img src="13.JPEG"></div>
+    <div class="slide"><img src="14.JPEG"></div>
+    <div class="slide"><img src="15.JPEG"></div>
+    <div class="slide"><img src="16.JPEG"></div>
+    <div class="slide"><img src="17.JPEG"></div>
+    <div class="slide"><img src="18.JPG"></div>
+    <div class="slide"><img src="19.JPG"></div>
+    <div class="slide"><img src="20.JPG"></div>
+    <div class="slide"><img src="21.JPEG"></div>
+    <div class="slide"><img src="22.JPEG"></div>
+    <div class="slide"><img src="23.JPEG"></div>
+    <div class="slide"><img src="24.JPEG"></div>
+    <div class="slide"><img src="25.JPG"></div>
+    <div class="slide"><img src="26.JPG"></div>
+    <div class="slide"><img src="27.JPG"></div>
+    <div class="slide"><img src="28.JPG"></div>
+    <div class="slide"><img src="29.JPG"></div>
+    <div class="slide"><img src="30.JPG"></div>
+    <div class="slide"><img src="31.JPEG"></div>
+    <div class="slide"><img src="31.JPG"></div>
+    <div class="slide"><img src="32.JPEG"></div>
+    <div class="slide"><img src="33(1).JPEG"></div>
+    <div class="slide"><img src="33.JPEG"></div>
+    <div class="slide"><img src="111.jpg"></div>
+    <div class="slide"><img src="112.jpg"></div>
+    <div class="slide"><img src="113.jpg"></div>
 </div>
 
 <script>
-    let currentIdx = 0;
     const slides = document.querySelectorAll('.slide');
-    const progress = document.getElementById('progressBar');
+    const music = document.getElementById('bgMusic');
+    let current = 0;
+    let timer;
+    const imgDuration = 4000; // 4 seconds per image
 
-    function changeSlide(dir) {
-        // Pause any playing video before moving
-        const currentVideo = slides[currentIdx].querySelector('video');
-        if (currentVideo) currentVideo.pause();
-
-        slides[currentIdx].classList.remove('active');
-        currentIdx = (currentIdx + dir + slides.length) % slides.length;
-        slides[currentIdx].classList.add('active');
-
-        // Play video automatically if it's a video slide
-        const nextVideo = slides[currentIdx].querySelector('video');
-        if (nextVideo) nextVideo.play();
-
-        // Update Progress Bar
-        progress.style.width = ((currentIdx + 1) / slides.length * 100) + "%";
+    function startPresentation() {
+        document.getElementById('start-screen').style.display = 'none';
+        music.play();
+        runSlide();
     }
 
-    // Keyboard controls
-    document.addEventListener('keydown', (e) => {
-        if (e.key === "ArrowRight") changeSlide(1);
-        if (e.key === "ArrowLeft") changeSlide(-1);
-    });
+    function runSlide() {
+        slides.forEach(s => s.classList.remove('active'));
+        const activeSlide = slides[current];
+        activeSlide.classList.add('active');
+
+        const video = activeSlide.querySelector('video');
+        
+        if (video) {
+            // It's a video: Lower music and wait for video to finish
+            music.volume = 0.15;
+            video.play();
+            video.onended = () => {
+                music.volume = 1.0;
+                nextSlide();
+            };
+        } else {
+            // It's an image: Show for set time
+            timer = setTimeout(nextSlide, imgDuration);
+        }
+    }
+
+    function nextSlide() {
+        current++;
+        if (current < slides.length) {
+            runSlide();
+        } else {
+            // Loop back to start or show a final message
+            current = 0;
+            runSlide();
+        }
+    }
 </script>
 
 </body>
