@@ -7,107 +7,118 @@
     <style>
         :root { 
             --gold: #d4af37; 
-            --gold-glow: rgba(212, 175, 55, 0.6);
-            --bg: #050505; 
+            --gold-glow: rgba(212, 175, 55, 0.5);
+            --bg: #030303; 
         }
 
         body, html { 
             margin: 0; padding: 0; 
             background: var(--bg); 
             color: white; 
-            font-family: 'Optima', 'Segoe UI', serif; 
+            font-family: 'Optima', 'Didot', 'serif'; 
             overflow: hidden; 
             height: 100%; 
         }
 
-        /* Cinematic Overlays */
-        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.4; pointer-events: none; }
-        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.9) 100%); z-index: 10; pointer-events: none; }
-        #shutter { position: fixed; inset: 0; background: white; z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        /* Ambient Layering */
+        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.5; pointer-events: none; }
+        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.9) 100%); z-index: 10; pointer-events: none; }
+        #shutter { position: fixed; inset: 0; background: white; z-index: 999; opacity: 0; pointer-events: none; }
 
-        /* Enhanced Subtitles */
+        /* Dynamic Lyric System */
         #lyric-container {
             position: fixed;
-            bottom: 12%;
+            bottom: 8%;
             width: 100%;
             text-align: center;
             z-index: 100;
         }
 
         .subtitle-text {
-            font-size: 2.2rem;
+            font-size: 2.4rem;
+            font-weight: 200;
             font-style: italic;
-            letter-spacing: 3px;
-            background: linear-gradient(to right, #fff, var(--gold), #fff);
+            letter-spacing: 4px;
+            background: linear-gradient(to bottom, #ffffff 0%, var(--gold) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 5px 15px rgba(0,0,0,0.5);
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+            transform: translateY(30px) scale(0.95);
+            transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+            filter: blur(8px);
         }
 
         .subtitle-text.active {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
+            filter: blur(0px);
         }
 
-        /* Intro Screen */
+        /* Cinematic Intro */
         #gate { 
             position: fixed; inset: 0; 
-            background: #000;
+            background: black;
             z-index: 1000; display: flex; 
             align-items: center; justify-content: center; 
-            transition: 2.5s cubic-bezier(0.7, 0, 0.3, 1); 
+            transition: 3s cubic-bezier(0.7, 0, 0.3, 1); 
         }
 
         .gate-card { 
-            text-align: center; padding: 80px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            background: rgba(10,10,10,0.8);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 0 100px rgba(0,0,0,1);
+            text-align: center; padding: 100px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            background: rgba(255,255,255,0.01);
+            backdrop-filter: blur(30px);
         }
 
         .start-btn { 
-            margin-top: 40px; padding: 20px 80px; 
+            margin-top: 50px; padding: 22px 90px; 
             background: transparent; border: 1px solid var(--gold); 
-            color: var(--gold); font-size: 1rem; cursor: pointer; 
-            letter-spacing: 8px; transition: 0.6s; text-transform: uppercase;
+            color: var(--gold); font-size: 0.9rem; cursor: pointer; 
+            letter-spacing: 10px; transition: 0.8s; text-transform: uppercase;
         }
 
-        .start-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 50px var(--gold-glow); }
+        .start-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 60px var(--gold-glow); }
 
-        /* Slideshow Engine */
-        #stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+        /* Media Engine */
+        #stage { position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; perspective: 1000px; }
         .slide { 
             position: absolute; inset: 0; opacity: 0; 
             display: flex; align-items: center; justify-content: center; 
-            transition: opacity 2s ease-in-out; visibility: hidden; 
+            transition: opacity 2.5s ease-in-out, transform 2.5s ease-in-out; 
+            visibility: hidden; 
         }
         .slide.active { opacity: 1; visibility: visible; }
 
         .slide img, .slide video { 
-            max-width: 90%; max-height: 85vh; 
+            max-width: 80%; max-height: 80vh; 
             object-fit: contain; 
-            box-shadow: 0 20px 80px rgba(0,0,0,0.8);
+            filter: drop-shadow(0 30px 60px rgba(0,0,0,1));
+            border-radius: 2px;
         }
 
-        /* Upgrade: Parallax Zoom */
+        /* Parallax & Ken Burns Upgrade */
         .slide.active img {
-            animation: panZoom 6s ease-in-out forwards;
+            animation: cinematicFloat 7s ease-in-out forwards;
         }
 
-        @keyframes panZoom {
-            0% { transform: scale(1.05) translateX(-10px); }
-            100% { transform: scale(1) translateX(10px); }
+        @keyframes cinematicFloat {
+            0% { transform: scale(1.1) translateY(10px) rotate(-1deg); }
+            100% { transform: scale(1.0) translateY(-10px) rotate(1deg); }
         }
 
+        /* Dedication Slide UI */
         .final-box h1 { 
-            font-size: 5rem; letter-spacing: 20px; text-transform: uppercase;
-            background: linear-gradient(135deg, #fff 0%, var(--gold) 50%, #fff 100%);
+            font-size: 5.5rem; letter-spacing: 18px; text-transform: uppercase; font-weight: 100;
+            background: linear-gradient(to right, #fff, var(--gold), #fff);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin: 0;
+        }
+
+        .final-box p { animation: fadeInUp 3s ease forwards; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -123,10 +134,10 @@
 
 <div id="gate">
     <div class="gate-card">
-        <h1 style="letter-spacing: 15px; color: var(--gold); margin-bottom: 10px;">WALKING IN THE WIND</h1>
-        <p style="opacity: 0.4; letter-spacing: 6px; font-style: italic;">A JOURNEY OF SERVICE & HOMECOMING</p>
-        <h2 style="font-size: 3rem; color: #fff; margin: 20px 0; font-weight: 200;">Miss Nyx Postrano</h2>
-        <button class="start-btn" onclick="ignite()">Enter Tribute</button>
+        <h1 style="letter-spacing: 20px; color: var(--gold); margin-bottom: 5px; font-weight: 100;">WALKING IN THE WIND</h1>
+        <p style="opacity: 0.3; letter-spacing: 8px; font-size: 0.8rem; margin-bottom: 30px;">THE HOMECOMING JOURNEY</p>
+        <h2 style="font-size: 3.5rem; color: white; margin: 20px 0; font-weight: 200; font-style: italic;">Miss Nyx Postrano</h2>
+        <button class="start-btn" onclick="ignite()">Begin Experience</button>
     </div>
 </div>
 
@@ -174,13 +185,13 @@
 
     <div class="slide">
         <div class="final-box" style="text-align: center;">
-            <p style="letter-spacing: 12px; margin-bottom: 25px; opacity: 0.7;">WELCOME HOME</p>
+            <p style="letter-spacing: 15px; margin-bottom: 30px; opacity: 0.6; font-size: 0.9rem;">DESTINATION REACHED</p>
             <h1>NYX POSTRANO</h1>
-            <p style="opacity: 0.9; margin-top: 30px; font-size: 1.3rem; letter-spacing: 3px; font-style: italic;">
+            <p style="opacity: 0.9; margin-top: 40px; font-size: 1.4rem; letter-spacing: 4px; font-style: italic;">
                 She is transitioning to her home assignment from this unit.
             </p>
-            <div style="width: 50px; height: 1px; background: var(--gold); margin: 30px auto;"></div>
-            <p style="opacity: 0.4; letter-spacing: 2px;">Your new chapter begins today.</p>
+            <div style="width: 80px; height: 1px; background: var(--gold); margin: 40px auto; opacity: 0.5;"></div>
+            <p style="opacity: 0.4; letter-spacing: 3px; font-size: 0.9rem;">Thank you for the memories and the service.</p>
         </div>
     </div>
 </div>
@@ -193,12 +204,15 @@
     const subtitle = document.getElementById('subtitle');
     let currentIdx = 0;
 
-    // Enhanced Lyric Sync
+    // Precise Lyric Timing (Seconds)
     const lyrics = [
+        { time: 6, text: "A week ago you said to me..." },
+        { time: 10, text: "Do you believe I'll ever be back?" },
+        { time: 15, text: "And I told you, I was sure of it." },
         { time: 28, text: "We carry your stories with us..." },
-        { time: 35, text: "Miss Nyx, welcome home." },
-        { time: 48, text: "Your dedication leaves a lasting mark." },
-        { time: 65, text: "Every step you took was vital." },
+        { time: 42, text: "You'll find me in the region of the summer stars." },
+        { time: 51, text: "Walking in the wind..." },
+        { time: 68, text: "Your dedication leaves a lasting mark." },
         { time: 105, text: "A transition toward new horizons." },
         { time: 155, text: "Your hometown mission awaits." },
         { time: 198, text: "Safe travels, Miss Nyx Postrano." }
@@ -206,49 +220,35 @@
 
     particlesJS("particles-js", {
         "particles": {
-            "number": { "value": 80 },
+            "number": { "value": 100 },
             "color": { "value": "#d4af37" },
-            "opacity": { "value": 0.3 },
-            "size": { "value": 1.2 },
-            "line_linked": { "enable": false },
-            "move": { "enable": true, "speed": 0.6, "direction": "top-right", "random": true }
+            "opacity": { "value": 0.4 },
+            "size": { "value": 1 },
+            "move": { "enable": true, "speed": 0.4, "direction": "top-right", "random": true }
         }
     });
 
     function ignite() {
         document.getElementById('gate').style.opacity = '0';
-        document.getElementById('gate').style.pointerEvents = 'none';
+        document.getElementById('gate').style.transform = 'scale(1.2)';
+        setTimeout(() => document.getElementById('gate').style.display = 'none', 3000);
         
         music.play();
         runEngine();
         
         music.ontimeupdate = () => {
             const current = music.currentTime;
-            const active = lyrics.find((l, i) => 
-                current >= l.time && (!lyrics[i+1] || current < lyrics[i+1].time)
-            );
+            const active = lyrics.reverse().find(l => current >= l.time);
+            lyrics.reverse(); // Reset order for next update
             
             if (active && subtitle.innerText !== active.text) {
                 subtitle.classList.remove('active');
                 setTimeout(() => {
                     subtitle.innerText = active.text;
                     subtitle.classList.add('active');
-                }, 400);
+                }, 500);
             }
         };
-    }
-
-    function fadeAudio(target) {
-        const interval = 50;
-        const step = 0.05;
-        const fade = setInterval(() => {
-            if (music.volume < target) {
-                music.volume = Math.min(target, music.volume + step);
-            } else {
-                music.volume = Math.max(target, music.volume - step);
-            }
-            if (Math.abs(music.volume - target) < 0.01) clearInterval(fade);
-        }, interval);
     }
 
     function runEngine() {
@@ -261,22 +261,23 @@
         const slide = slides[currentIdx];
         slide.classList.add('active');
         
-        // Lens Shutter Effect
-        shutter.style.opacity = '0.4';
-        setTimeout(() => { shutter.style.opacity = '0'; }, 150);
+        // Shutter pulse
+        shutter.style.opacity = '0.5';
+        setTimeout(() => { shutter.style.opacity = '0'; }, 100);
 
         const video = slide.querySelector('video');
         if (video) {
-            fadeAudio(0.15); // Duck music
+            // Audio Ducking Logic
+            music.animate([{volume: music.volume}, {volume: 0.1}], {duration: 1000, fill: 'forwards'});
             video.currentTime = 0;
             video.play();
             video.onended = () => {
-                fadeAudio(1.0); // Swell music
+                music.animate([{volume: 0.1}, {volume: 1.0}], {duration: 1000, fill: 'forwards'});
                 advance();
             };
         } else {
-            // Slide duration 5.4s for smoother transition
-            setTimeout(advance, 5400);
+            // Standard photo dwell time (6 seconds for cinematic effect)
+            setTimeout(advance, 6000);
         }
     }
 
