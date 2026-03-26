@@ -2,39 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Farewell & Tribute - Officer Presentation</title>
+    <title>Officer Tribute - Animated Presentation</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        body { margin: 0; background: #000; color: #fff; font-family: 'Georgia', serif; overflow: hidden; }
         
-        /* Start Overlay */
-        #start-overlay { position: fixed; inset: 0; background: #000; z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .start-btn { padding: 20px 40px; font-size: 24px; cursor: pointer; background: #c6a02e; border: none; border-radius: 8px; color: white; font-weight: bold; }
-        
-        /* Slides */
-        .slide { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 1.5s; }
-        .slide.active { display: flex; opacity: 1; }
-        img, video { max-width: 90%; max-height: 85vh; border: 3px solid #333; border-radius: 5px; }
-        
-        /* Farewell Message Styling */
-        .farewell-text { text-align: center; padding: 40px; background: rgba(0,0,0,0.8); border: 2px solid #c6a02e; border-radius: 15px; }
-        h1 { color: #c6a02e; font-size: 3rem; margin-bottom: 20px; }
-        p { font-size: 1.8rem; line-height: 1.5; color: #eee; }
+        #start-screen { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .play-btn { padding: 15px 40px; font-size: 1.5rem; cursor: pointer; background: #d4af37; border: none; border-radius: 50px; color: #000; font-weight: bold; transition: 0.3s; }
+        .play-btn:hover { background: #fff; transform: scale(1.05); }
+
+        .slide-deck { position: relative; width: 100vw; height: 100vh; }
+        .slide { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 1.5s ease-in-out; }
+        .slide.active { opacity: 1; visibility: visible; }
+
+        /* Animated Image Effect */
+        .slide img { 
+            max-width: 90%; max-height: 85vh; 
+            box-shadow: 0 0 50px rgba(0,0,0,1);
+            transform: scale(1);
+            transition: transform 6s linear;
+        }
+        .slide.active img { transform: scale(1.1); }
+
+        .slide video { max-width: 95%; max-height: 90vh; }
+
+        .text-overlay { text-align: center; max-width: 800px; }
+        .gold-text { color: #d4af37; font-size: 3.5rem; margin-bottom: 0.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .sub-text { font-size: 1.8rem; line-height: 1.6; font-style: italic; }
     </style>
 </head>
 <body>
 
-<audio id="bgMusic" src="music.mp3" loop></audio>
+<video id="mainAudio" style="display:none;">
+    <source src="vidaudio.mp4" type="video/mp4">
+</video>
 
-<div id="start-overlay">
-    <h1>Officer Tribute</h1>
-    <button class="start-btn" onclick="startShow()">Begin Presentation</button>
+<div id="start-screen">
+    <h2 style="letter-spacing: 3px;">HONORING OUR OFFICER</h2>
+    <button class="play-btn" onclick="beginShow()">START PRESENTATION</button>
 </div>
 
-<div id="slideshow">
+<div class="slide-deck">
     <div class="slide active"><img src="1.JPG"></div>
-    <div class="slide"><video src="2.MOV"></video></div>
-    <div class="slide"><video src="3.MOV"></video></div>
-    <div class="slide"><video src="4.MOV"></video></div>
+    <div class="slide"><video id="v1" src="2.MOV"></video></div>
+    <div class="slide"><video id="v2" src="3.MOV"></video></div>
+    <div class="slide"><video id="v3" src="4.MOV"></video></div>
     <div class="slide"><img src="5.JPEG"></div>
     <div class="slide"><img src="6.JPEG"></div>
     <div class="slide"><img src="7.JPEG"></div>
@@ -69,48 +80,64 @@
     <div class="slide"><img src="111.jpg"></div>
     <div class="slide"><img src="112.jpg"></div>
     <div class="slide"><img src="113.jpg"></div>
-    
+
     <div class="slide">
-        <div class="farewell-text">
-            <h1>Farewell & Best Wishes</h1>
-            <p>Congratulations on your new assignment.<br>
-            While we will deeply miss your leadership and friendship here,<br>
-            we are overjoyed that your journey is leading you back home.<br>
-            Thank you for your service and the memories we’ve shared.</p>
+        <div class="text-overlay">
+            <h1 class="gold-text">Welcome Home</h1>
+            <p class="sub-text">
+                Congratulations on your new assignment.<br>
+                We will miss you here, but we're happy you're home.<br>
+                Thank you for the memories.
+            </p>
         </div>
     </div>
 </div>
 
 <script>
     const slides = document.querySelectorAll('.slide');
-    const music = document.getElementById('bgMusic');
-    let i = 0;
+    const bgAudio = document.getElementById('mainAudio');
+    let currentIdx = 0;
+    const imgTime = 5000; // 5 seconds per image
 
-    function startShow() {
-        document.getElementById('start-overlay').style.display = 'none';
-        music.play();
-        showNext();
+    function beginShow() {
+        document.getElementById('start-screen').style.display = 'none';
+        bgAudio.play();
+        playSequence();
     }
 
-    function showNext() {
+    function playSequence() {
+        // Reset all
         slides.forEach(s => s.classList.remove('active'));
-        const current = slides[i];
-        current.classList.add('active');
+        
+        const currentSlide = slides[currentIdx];
+        currentSlide.classList.add('active');
 
-        const video = current.querySelector('video');
-        if (video) {
-            music.volume = 0.2;
-            video.play();
-            video.onended = () => { music.volume = 1; next(); };
+        const vid = currentSlide.querySelector('video');
+        
+        if (vid) {
+            // Lower background audio for the clip
+            bgAudio.volume = 0.1;
+            vid.play();
+            vid.onended = () => {
+                bgAudio.volume = 1.0;
+                moveToNext();
+            };
         } else {
-            setTimeout(next, 4000);
+            // It's an image, wait 5 seconds then move on
+            setTimeout(moveToNext, imgTime);
         }
     }
 
-    function next() {
-        i = (i + 1) % slides.length;
-        showNext();
+    function moveToNext() {
+        currentIdx++;
+        if (currentIdx < slides.length) {
+            playSequence();
+        } else {
+            // Keep the final message on screen
+            console.log("Presentation Ended");
+        }
     }
 </script>
+
 </body>
 </html>
