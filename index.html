@@ -1,1 +1,281 @@
-html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Accomplished | Officer Farewell</title>
+    <style>
+        :root { 
+            --gold: #d4af37; 
+            --gold-glow: rgba(212, 175, 55, 0.8);
+            --bg: #050505; 
+            --police-blue: #003366;
+        }
+
+        body, html { 
+            margin: 0; padding: 0; 
+            background: var(--bg); 
+            color: white; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            overflow: hidden; 
+            height: 100%; 
+        }
+
+        /* Tactical Background Effect */
+        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.3; pointer-events: none; }
+        
+        .vignette { 
+            position: fixed; inset: 0; 
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%); 
+            z-index: 10; pointer-events: none; 
+        }
+
+        /* Scanner Line Effect */
+        .scanner {
+            position: fixed; top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--gold); box-shadow: 0 0 15px var(--gold);
+            z-index: 15; opacity: 0.5;
+            animation: scan 4s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+
+        /* Funny Animated Subtitles */
+        #lyric-container {
+            position: fixed; bottom: 10%; width: 100%;
+            text-align: center; z-index: 100;
+        }
+
+        .subtitle-text {
+            font-size: 2.8rem; font-weight: 900;
+            text-transform: uppercase; letter-spacing: -1px;
+            color: #fff; text-shadow: 4px 4px 0px var(--police-blue);
+            opacity: 0; transform: scale(0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .subtitle-text.active {
+            opacity: 1; transform: scale(1) rotate(-2deg);
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(1.5); }
+            100% { transform: scale(1) rotate(-2deg); }
+        }
+
+        /* Intro / Gate Screen */
+        #gate { 
+            position: fixed; inset: 0; background: #000;
+            z-index: 1000; display: flex; align-items: center; justify-content: center; 
+        }
+
+        .gate-card { 
+            text-align: center; padding: 60px;
+            border: 2px solid var(--gold); background: rgba(0, 20, 40, 0.9);
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+        }
+
+        .start-btn { 
+            margin-top: 30px; padding: 15px 50px; 
+            background: var(--gold); border: none; 
+            color: black; font-weight: bold; font-size: 1.2rem; cursor: pointer; 
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            transition: 0.3s;
+        }
+
+        .start-btn:hover { transform: scale(1.1); background: white; }
+
+        /* Stage Styling */
+        #stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+        .slide { 
+            position: absolute; inset: 0; opacity: 0; 
+            display: flex; align-items: center; justify-content: center; 
+            transition: 1s; 
+        }
+        .slide.active { opacity: 1; }
+
+        .slide img, .slide video { 
+            max-width: 85%; max-height: 75vh; 
+            border: 8px solid white; box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
+            transform: rotate(1deg);
+        }
+
+        .final-box h1 { font-size: 4rem; color: var(--gold); text-shadow: 0 0 20px var(--gold); }
+    </style>
+</head>
+<body>
+
+<div id="particles-js"></div>
+<div class="scanner"></div>
+<div class="vignette"></div>
+
+<audio id="bgMusic" src="Walking in the Wind - One Direction (Lyrics) - Little Peach (128k).mp3"></audio>
+
+<div id="lyric-container">
+    <div id="subtitle" class="subtitle-text"></div>
+</div>
+
+<div id="gate">
+    <div class="gate-card">
+        <h1 style="color: var(--gold); margin:0;">MISSION DEBRIEF</h1>
+        <p style="letter-spacing: 5px; opacity: 0.7;">CASE FILE: OUTGOING OFFICER</p>
+        <button class="start-btn" onclick="ignite()">AUTHORIZE ACCESS</button>
+    </div>
+</div>
+
+<div id="stage">
+    <div id="stage">
+    <div class="slide active"><img src="1.JPG"></div>
+    <div class="slide"><video src="2.MOV" muted></video></div>
+    <div class="slide"><video src="3.MOV" muted></video></div>
+    <div class="slide"><video src="4.MOV" muted></video></div>
+    <div class="slide"><img src="5.JPEG"></div>
+    <div class="slide"><img src="6.JPEG"></div>
+    <div class="slide"><img src="7.JPEG"></div>
+    <div class="slide"><img src="8.JPEG"></div>
+    <div class="slide"><img src="9.JPEG"></div>
+    <div class="slide"><img src="10.JPEG"></div>
+    <div class="slide"><img src="11.JPEG"></div>
+    <div class="slide"><img src="12.JPEG"></div>
+    <div class="slide"><img src="13.JPEG"></div>
+    <div class="slide"><img src="14.JPEG"></div>
+    <div class="slide"><img src="15.JPEG"></div>
+    <div class="slide"><img src="16.JPEG"></div>
+    <div class="slide"><img src="17.JPEG"></div>
+    <div class="slide"><img src="18.JPG"></div>
+    <div class="slide"><img src="19.JPG"></div>
+    <div class="slide"><img src="20.JPG"></div>
+    <div class="slide"><img src="21.JPEG"></div>
+    <div class="slide"><img src="22.JPEG"></div>
+    <div class="slide"><img src="23.JPEG"></div>
+    <div class="slide"><img src="24.JPEG"></div>
+    <div class="slide"><img src="25.JPG"></div>
+    <div class="slide"><img src="26.JPG"></div>
+    <div class="slide"><img src="27.JPG"></div>
+    <div class="slide"><img src="28.JPG"></div>
+    <div class="slide"><img src="29.JPG"></div>
+    <div class="slide"><img src="30.JPG"></div>
+    <div class="slide"><img src="31.JPEG"></div>
+    <div class="slide"><img src="31.JPG"></div>
+    <div class="slide"><img src="32.JPEG"></div>
+    <div class="slide"><img src="33(1).JPEG"></div>
+    <div class="slide"><img src="33.JPEG"></div>
+    <div class="slide"><img src="111.jpg"></div>
+    <div class="slide"><img src="112.jpg"></div>
+    <div class="slide"><img src="113.jpg"></div>
+
+    <div class="slide">
+        <div class="final-box" style="text-align: center;">
+            <p style="letter-spacing: 12px; margin-bottom: 25px; opacity: 0.7;">WELCOME HOME</p>
+            <h1>NYX POSTRANO</h1>
+            <p style="opacity: 0.9; margin-top: 30px; font-size: 1.3rem; letter-spacing: 3px; font-style: italic;">
+                She is transitioning to her home assignment from this unit.
+            </p>
+            <div style="width: 50px; height: 1px; background: var(--gold); margin: 30px auto;"></div>
+            <p style="opacity: 0.4; letter-spacing: 2px;">Your new chapter begins today.</p>
+        </div>
+    </div>
+</div>
+
+    <div class="slide">
+        <div class="final-box" style="text-align: center;">
+            <p style="letter-spacing: 10px; font-weight: bold;">STATUS: TRANSFERRED</p>
+            <h1>GOOD LUCK, OFFICER!</h1>
+            <p style="font-size: 1.5rem; color: #fff; font-style: italic;">
+                "New Unit, Same Legend."
+            </p>
+            <div style="width: 100px; height: 4px; background: var(--gold); margin: 20px auto;"></div>
+            <p style="opacity: 0.6;">Leave some coffee for the rest of us!</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    const slides = document.querySelectorAll('.slide');
+    const music = document.getElementById('bgMusic');
+    const subtitle = document.getElementById('subtitle');
+    let currentIdx = 0;
+
+    // GENERALIZED FUNNY OFFICER WORDINGS
+    const lyrics = [
+        { time: 0, text: "TARGET IDENTIFIED: ONE TOP-TIER OFFICER" },
+        { time: 5, text: "PREPARE FOR EMOTIONAL BACKUP" },
+        { time: 14, text: "A week ago you said to me..." },
+        { time: 18, text: "Who's gonna handle all the paperwork now?" },
+        { time: 23, text: "If we're lost, don't call us..." },
+        { time: 26, text: "Because you're off the clock!" },
+        { time: 31, text: "Transferring to a new beat" },
+        { time: 35, text: "But the legend stays here" },
+        { time: 41, text: "We'll see you... at the next reunion" },
+        { time: 46, text: "WALKING INTO THE NEW UNIT" },
+        { time: 50, text: "SMILING AT THE LACK OF DUTY" },
+        { time: 54, text: "YOU'LL BE GREATLY MISSED" },
+        { time: 58, text: "ESPECIALLY BY THE COFFEE MACHINE" },
+        { time: 65, text: "EVIDENCE OF A CAREER WELL SPENT" },
+        { time: 80, text: "NEW HORIZONS AHEAD!" },
+        { time: 105, text: "CASE CLOSED: YOU WERE THE BEST" },
+        { time: 138, text: "ENJOY THE NEW CHAPTER" },
+        { time: 155, text: "YOUR MISSION CONTINUES ELSEWHERE" },
+        { time: 198, text: "SAFE TRAVELS, OFFICER!" }
+    ];
+
+    particlesJS("particles-js", {
+        "particles": {
+            "number": { "value": 100 },
+            "color": { "value": "#ffffff" },
+            "opacity": { "value": 0.2 },
+            "size": { "value": 1 },
+            "move": { "enable": true, "speed": 1 }
+        }
+    });
+
+    function ignite() {
+        document.getElementById('gate').style.opacity = '0';
+        setTimeout(() => document.getElementById('gate').style.display = 'none', 1000);
+        music.play();
+        runEngine();
+        
+        music.ontimeupdate = () => {
+            const current = music.currentTime;
+            const active = lyrics.reduce((prev, curr) => (curr.time <= current) ? curr : prev, null);
+            
+            if (active && subtitle.innerText !== active.text) {
+                subtitle.classList.remove('active');
+                setTimeout(() => {
+                    subtitle.innerText = active.text;
+                    subtitle.classList.add('active');
+                }, 50);
+            }
+        };
+    }
+
+    function runEngine() {
+        slides.forEach(s => s.classList.remove('active'));
+        const slide = slides[currentIdx];
+        slide.classList.add('active');
+
+        const video = slide.querySelector('video');
+        if (video) {
+            video.currentTime = 0;
+            video.play();
+            video.onended = advance;
+        } else {
+            setTimeout(advance, 5000);
+        }
+    }
+
+    function advance() {
+        if (currentIdx < slides.length - 1) {
+            currentIdx++;
+            runEngine();
+        }
+    }
+</script>
+</body>
+</html>
