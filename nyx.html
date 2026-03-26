@@ -176,9 +176,8 @@
             <p style="letter-spacing: 12px; margin-bottom: 20px;">WELCOME HOME</p>
             <h1>MISS NYX POSTRANO</h1>
             <p style="opacity: 0.8; margin-top: 20px; font-size: 1.2rem; letter-spacing: 2px;">
-                She will be transitioning to her home assignment from this unit.
+                She is transitioning to her home assignment from this unit.
             </p>
-            <p style="opacity: 0.5; margin-top: 10px;">Your new chapter begins today.</p>
         </div>
     </div>
 </div>
@@ -191,20 +190,15 @@
     const subtitle = document.getElementById('subtitle');
     let currentIdx = 0;
 
-    // Full Lyrics Timeline (Synced to "Walking in the Wind")
+    // Optimized Lyric Timeline
     const lyrics = [
-        { time: 2, text: "A week ago you said to me..." },
-        { time: 7, text: "Do you believe I'll ever be back?" },
-        { time: 13, text: "And I told you, I was sure of it." },
-        { time: 20, text: "Walking in the wind..." },
         { time: 28, text: "We carry your stories with us." },
         { time: 35, text: "Miss Nyx, welcome home." },
-        { time: 50, text: "Every step you took led here." },
-        { time: 75, text: "A journey of dedication." },
-        { time: 100, text: "To the peace you've helped build." },
-        { time: 130, text: "Your hometown awaits." },
-        { time: 160, text: "The wind is at your back." },
-        { time: 190, text: "Welcome Home, Miss Nyx Postrano." }
+        { time: 45, text: "Your dedication leaves a mark." },
+        { time: 60, text: "Every step you took was vital." },
+        { time: 100, text: "A transition toward new beginnings." },
+        { time: 150, text: "Your hometown mission awaits." },
+        { time: 195, text: "Safe travels, Miss Nyx Postrano." }
     ];
 
     particlesJS("particles-js", {
@@ -225,7 +219,6 @@
         music.play();
         runEngine();
         
-        // Precise Lyric Monitor
         music.ontimeupdate = () => {
             const current = music.currentTime;
             const active = lyrics.find((l, i) => 
@@ -247,13 +240,11 @@
         const slide = slides[currentIdx];
         slide.classList.add('active');
         
-        // Shutter Flash
         shutter.style.opacity = '0.35';
         setTimeout(() => { shutter.style.opacity = '0'; }, 200);
 
         const video = slide.querySelector('video');
         if (video) {
-            // Duck music volume for videos
             music.animate([{volume: 1}, {volume: 0.15}], {duration: 1000, fill: 'forwards'});
             video.currentTime = 0;
             video.play();
@@ -262,7 +253,6 @@
                 advance();
             };
         } else {
-            // Timing: 202 seconds / 39 slides = ~5.1 seconds per slide
             setTimeout(advance, 5100);
         }
     }
