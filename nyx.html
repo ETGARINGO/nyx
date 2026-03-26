@@ -3,118 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tribute | Miss Nyx Postrano</title>
+    <title>Mission Accomplished | Officer Farewell</title>
     <style>
         :root { 
             --gold: #d4af37; 
-            --gold-glow: rgba(212, 175, 55, 0.6);
+            --gold-glow: rgba(212, 175, 55, 0.8);
             --bg: #050505; 
+            --police-blue: #003366;
         }
 
         body, html { 
             margin: 0; padding: 0; 
             background: var(--bg); 
             color: white; 
-            font-family: 'Optima', 'Segoe UI', serif; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             overflow: hidden; 
             height: 100%; 
         }
 
-        /* Cinematic Overlays */
-        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.4; pointer-events: none; }
-        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.9) 100%); z-index: 10; pointer-events: none; }
-        #shutter { position: fixed; inset: 0; background: white; z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        /* Tactical Background Effect */
+        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.3; pointer-events: none; }
+        
+        .vignette { 
+            position: fixed; inset: 0; 
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%); 
+            z-index: 10; pointer-events: none; 
+        }
 
-        /* Enhanced Subtitles */
+        /* Scanner Line Effect */
+        .scanner {
+            position: fixed; top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--gold); box-shadow: 0 0 15px var(--gold);
+            z-index: 15; opacity: 0.5;
+            animation: scan 4s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+
+        /* Funny Animated Subtitles */
         #lyric-container {
-            position: fixed;
-            bottom: 12%;
-            width: 100%;
-            text-align: center;
-            z-index: 100;
+            position: fixed; bottom: 10%; width: 100%;
+            text-align: center; z-index: 100;
         }
 
         .subtitle-text {
-            font-size: 2.2rem;
-            font-style: italic;
-            letter-spacing: 3px;
-            background: linear-gradient(to right, #fff, var(--gold), #fff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+            font-size: 2.8rem; font-weight: 900;
+            text-transform: uppercase; letter-spacing: -1px;
+            color: #fff; text-shadow: 4px 4px 0px var(--police-blue);
+            opacity: 0; transform: scale(0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .subtitle-text.active {
-            opacity: 1;
-            transform: translateY(0);
+            opacity: 1; transform: scale(1) rotate(-2deg);
+            animation: bounce 0.5s ease;
         }
 
-        /* Intro Screen */
+        @keyframes bounce {
+            0% { transform: scale(1.5); }
+            100% { transform: scale(1) rotate(-2deg); }
+        }
+
+        /* Intro / Gate Screen */
         #gate { 
-            position: fixed; inset: 0; 
-            background: #000;
-            z-index: 1000; display: flex; 
-            align-items: center; justify-content: center; 
-            transition: 2.5s cubic-bezier(0.7, 0, 0.3, 1); 
+            position: fixed; inset: 0; background: #000;
+            z-index: 1000; display: flex; align-items: center; justify-content: center; 
         }
 
         .gate-card { 
-            text-align: center; padding: 80px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            background: rgba(10,10,10,0.8);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 0 100px rgba(0,0,0,1);
+            text-align: center; padding: 60px;
+            border: 2px solid var(--gold); background: rgba(0, 20, 40, 0.9);
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
         }
 
         .start-btn { 
-            margin-top: 40px; padding: 20px 80px; 
-            background: transparent; border: 1px solid var(--gold); 
-            color: var(--gold); font-size: 1rem; cursor: pointer; 
-            letter-spacing: 8px; transition: 0.6s; text-transform: uppercase;
+            margin-top: 30px; padding: 15px 50px; 
+            background: var(--gold); border: none; 
+            color: black; font-weight: bold; font-size: 1.2rem; cursor: pointer; 
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            transition: 0.3s;
         }
 
-        .start-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 50px var(--gold-glow); }
+        .start-btn:hover { transform: scale(1.1); background: white; }
 
-        /* Slideshow Engine */
+        /* Stage Styling */
         #stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
         .slide { 
             position: absolute; inset: 0; opacity: 0; 
             display: flex; align-items: center; justify-content: center; 
-            transition: opacity 2s ease-in-out; visibility: hidden; 
+            transition: 1s; 
         }
-        .slide.active { opacity: 1; visibility: visible; }
+        .slide.active { opacity: 1; }
 
         .slide img, .slide video { 
-            max-width: 90%; max-height: 85vh; 
-            object-fit: contain; 
-            box-shadow: 0 20px 80px rgba(0,0,0,0.8);
+            max-width: 85%; max-height: 75vh; 
+            border: 8px solid white; box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
+            transform: rotate(1deg);
         }
 
-        /* Upgrade: Parallax Zoom */
-        .slide.active img {
-            animation: panZoom 6s ease-in-out forwards;
-        }
-
-        @keyframes panZoom {
-            0% { transform: scale(1.05) translateX(-10px); }
-            100% { transform: scale(1) translateX(10px); }
-        }
-
-        .final-box h1 { 
-            font-size: 5rem; letter-spacing: 20px; text-transform: uppercase;
-            background: linear-gradient(135deg, #fff 0%, var(--gold) 50%, #fff 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin: 0;
-        }
+        .final-box h1 { font-size: 4rem; color: var(--gold); text-shadow: 0 0 20px var(--gold); }
     </style>
 </head>
 <body>
 
 <div id="particles-js"></div>
-<div id="shutter"></div>
+<div class="scanner"></div>
+<div class="vignette"></div>
+
 <audio id="bgMusic" src="Walking in the Wind - One Direction (Lyrics) - Little Peach (128k).mp3"></audio>
 
 <div id="lyric-container">
@@ -123,64 +122,26 @@
 
 <div id="gate">
     <div class="gate-card">
-        <h1 style="letter-spacing: 15px; color: var(--gold); margin-bottom: 10px;">WALKING IN THE WIND</h1>
-        <p style="opacity: 0.4; letter-spacing: 6px; font-style: italic;">A JOURNEY OF SERVICE & HOMECOMING</p>
-        <h2 style="font-size: 3rem; color: #fff; margin: 20px 0; font-weight: 200;">Miss Nyx Postrano</h2>
-        <button class="start-btn" onclick="ignite()">Enter Tribute</button>
+        <h1 style="color: var(--gold); margin:0;">MISSION DEBRIEF</h1>
+        <p style="letter-spacing: 5px; opacity: 0.7;">CASE FILE: OUTGOING OFFICER</p>
+        <button class="start-btn" onclick="ignite()">AUTHORIZE ACCESS</button>
     </div>
 </div>
-
-<div class="vignette"></div>
 
 <div id="stage">
     <div class="slide active"><img src="1.JPG"></div>
     <div class="slide"><video src="2.MOV" muted></video></div>
-    <div class="slide"><video src="3.MOV" muted></video></div>
-    <div class="slide"><video src="4.MOV" muted></video></div>
-    <div class="slide"><img src="5.JPEG"></div>
-    <div class="slide"><img src="6.JPEG"></div>
-    <div class="slide"><img src="7.JPEG"></div>
-    <div class="slide"><img src="8.JPEG"></div>
-    <div class="slide"><img src="9.JPEG"></div>
-    <div class="slide"><img src="10.JPEG"></div>
-    <div class="slide"><img src="11.JPEG"></div>
-    <div class="slide"><img src="12.JPEG"></div>
-    <div class="slide"><img src="13.JPEG"></div>
-    <div class="slide"><img src="14.JPEG"></div>
-    <div class="slide"><img src="15.JPEG"></div>
-    <div class="slide"><img src="16.JPEG"></div>
-    <div class="slide"><img src="17.JPEG"></div>
-    <div class="slide"><img src="18.JPG"></div>
-    <div class="slide"><img src="19.JPG"></div>
-    <div class="slide"><img src="20.JPG"></div>
-    <div class="slide"><img src="21.JPEG"></div>
-    <div class="slide"><img src="22.JPEG"></div>
-    <div class="slide"><img src="23.JPEG"></div>
-    <div class="slide"><img src="24.JPEG"></div>
-    <div class="slide"><img src="25.JPG"></div>
-    <div class="slide"><img src="26.JPG"></div>
-    <div class="slide"><img src="27.JPG"></div>
-    <div class="slide"><img src="28.JPG"></div>
-    <div class="slide"><img src="29.JPG"></div>
-    <div class="slide"><img src="30.JPG"></div>
-    <div class="slide"><img src="31.JPEG"></div>
-    <div class="slide"><img src="31.JPG"></div>
-    <div class="slide"><img src="32.JPEG"></div>
-    <div class="slide"><img src="33(1).JPEG"></div>
-    <div class="slide"><img src="33.JPEG"></div>
-    <div class="slide"><img src="111.jpg"></div>
-    <div class="slide"><img src="112.jpg"></div>
     <div class="slide"><img src="113.jpg"></div>
 
     <div class="slide">
         <div class="final-box" style="text-align: center;">
-            <p style="letter-spacing: 12px; margin-bottom: 25px; opacity: 0.7;">WELCOME HOME</p>
-            <h1>NYX POSTRANO</h1>
-            <p style="opacity: 0.9; margin-top: 30px; font-size: 1.3rem; letter-spacing: 3px; font-style: italic;">
-                She is transitioning to her home assignment from this unit.
+            <p style="letter-spacing: 10px; font-weight: bold;">STATUS: TRANSFERRED</p>
+            <h1>GOOD LUCK, OFFICER!</h1>
+            <p style="font-size: 1.5rem; color: #fff; font-style: italic;">
+                "New Unit, Same Legend."
             </p>
-            <div style="width: 50px; height: 1px; background: var(--gold); margin: 30px auto;"></div>
-            <p style="opacity: 0.4; letter-spacing: 2px;">Your new chapter begins today.</p>
+            <div style="width: 100px; height: 4px; background: var(--gold); margin: 20px auto;"></div>
+            <p style="opacity: 0.6;">Leave some coffee for the rest of us!</p>
         </div>
     </div>
 </div>
@@ -189,116 +150,74 @@
 <script>
     const slides = document.querySelectorAll('.slide');
     const music = document.getElementById('bgMusic');
-    const shutter = document.getElementById('shutter');
     const subtitle = document.getElementById('subtitle');
     let currentIdx = 0;
 
-    // Precisely timed for "Walking in the Wind" by One Direction
+    // GENERALIZED FUNNY OFFICER WORDINGS
     const lyrics = [
-        { time: 0, text: "A Journey of Service & Homecoming" },
-        { time: 5, text: "For Miss Nyx Postrano" },
+        { time: 0, text: "TARGET IDENTIFIED: ONE TOP-TIER OFFICER" },
+        { time: 5, text: "PREPARE FOR EMOTIONAL BACKUP" },
         { time: 14, text: "A week ago you said to me..." },
-        { time: 18, text: "Do you believe I'll never be too far?" },
-        { time: 23, text: "If I'm lost, just look for me" },
-        { time: 26, text: "You'll find me in the region of the stars" },
-        { time: 31, text: "I told you never to take a look back" },
-        { time: 35, text: "We'll be together again, I hope that" },
-        { time: 41, text: "I'll see you... oh, I'll see you" },
-        { time: 46, text: "Walking in the wind" },
-        { time: 50, text: "Smiling at the sunset" },
-        { time: 54, text: "I'll be greatly missed" },
-        { time: 58, text: "But I know you'll never forget" },
-        { time: 65, text: "Your dedication leaves a lasting mark." },
-        { time: 80, text: "A transition toward new horizons." },
-        { time: 105, text: "We carry your stories with us..." },
-        { time: 138, text: "Walking in the wind" },
-        { time: 142, text: "Smiling at the sunset" },
-        { time: 155, text: "Your hometown mission awaits." },
-        { time: 198, text: "Safe travels, Miss Nyx Postrano." }
+        { time: 18, text: "Who's gonna handle all the paperwork now?" },
+        { time: 23, text: "If we're lost, don't call us..." },
+        { time: 26, text: "Because you're off the clock!" },
+        { time: 31, text: "Transferring to a new beat" },
+        { time: 35, text: "But the legend stays here" },
+        { time: 41, text: "We'll see you... at the next reunion" },
+        { time: 46, text: "WALKING INTO THE NEW UNIT" },
+        { time: 50, text: "SMILING AT THE LACK OF DUTY" },
+        { time: 54, text: "YOU'LL BE GREATLY MISSED" },
+        { time: 58, text: "ESPECIALLY BY THE COFFEE MACHINE" },
+        { time: 65, text: "EVIDENCE OF A CAREER WELL SPENT" },
+        { time: 80, text: "NEW HORIZONS AHEAD!" },
+        { time: 105, text: "CASE CLOSED: YOU WERE THE BEST" },
+        { time: 138, text: "ENJOY THE NEW CHAPTER" },
+        { time: 155, text: "YOUR MISSION CONTINUES ELSEWHERE" },
+        { time: 198, text: "SAFE TRAVELS, OFFICER!" }
     ];
 
     particlesJS("particles-js", {
         "particles": {
-            "number": { "value": 80 },
-            "color": { "value": "#d4af37" },
-            "opacity": { "value": 0.3 },
-            "size": { "value": 1.2 },
-            "line_linked": { "enable": false },
-            "move": { "enable": true, "speed": 0.6, "direction": "top-right", "random": true }
+            "number": { "value": 100 },
+            "color": { "value": "#ffffff" },
+            "opacity": { "value": 0.2 },
+            "size": { "value": 1 },
+            "move": { "enable": true, "speed": 1 }
         }
     });
 
     function ignite() {
         document.getElementById('gate').style.opacity = '0';
-        document.getElementById('gate').style.pointerEvents = 'none';
-        
+        setTimeout(() => document.getElementById('gate').style.display = 'none', 1000);
         music.play();
         runEngine();
         
         music.ontimeupdate = () => {
             const current = music.currentTime;
+            const active = lyrics.reduce((prev, curr) => (curr.time <= current) ? curr : prev, null);
             
-            // Logic to find the current active lyric
-            const active = lyrics.reduce((prev, curr) => {
-                return (curr.time <= current) ? curr : prev;
-            }, null);
-            
-            // Smart Hide Logic: If the next lyric is far away, hide current after 4.5s
-            const nextIdx = lyrics.indexOf(active) + 1;
-            const nextLyric = lyrics[nextIdx];
-            const shouldHide = active && nextLyric && (nextLyric.time - active.time > 6) && (current > active.time + 4.5);
-
-            if (active && subtitle.innerText !== active.text && !shouldHide) {
+            if (active && subtitle.innerText !== active.text) {
                 subtitle.classList.remove('active');
                 setTimeout(() => {
                     subtitle.innerText = active.text;
                     subtitle.classList.add('active');
-                }, 400);
-            } else if (shouldHide) {
-                subtitle.classList.remove('active');
+                }, 50);
             }
         };
     }
 
-    function fadeAudio(target) {
-        const interval = 50;
-        const step = 0.05;
-        const fade = setInterval(() => {
-            if (music.volume < target) {
-                music.volume = Math.min(target, music.volume + step);
-            } else {
-                music.volume = Math.max(target, music.volume - step);
-            }
-            if (Math.abs(music.volume - target) < 0.01) clearInterval(fade);
-        }, interval);
-    }
-
     function runEngine() {
-        slides.forEach(s => {
-            s.classList.remove('active');
-            const v = s.querySelector('video');
-            if(v) v.pause();
-        });
-
+        slides.forEach(s => s.classList.remove('active'));
         const slide = slides[currentIdx];
         slide.classList.add('active');
-        
-        // Lens Shutter Effect
-        shutter.style.opacity = '0.4';
-        setTimeout(() => { shutter.style.opacity = '0'; }, 150);
 
         const video = slide.querySelector('video');
         if (video) {
-            fadeAudio(0.15); // Duck music volume for video audio
             video.currentTime = 0;
             video.play();
-            video.onended = () => {
-                fadeAudio(1.0); // Bring music back up
-                advance();
-            };
+            video.onended = advance;
         } else {
-            // Slide duration set to 5.4s for a smooth cinematic pace
-            setTimeout(advance, 5400);
+            setTimeout(advance, 5000);
         }
     }
 
