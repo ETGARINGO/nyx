@@ -2,36 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Officer Tribute - Farewell & Welcome Home</title>
+    <title>Officer's Journey - The Movie</title>
     <style>
-        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
+        :root { --gold: #c6a02e; --speed: 6s; }
+        body { margin: 0; background: #000; color: #fff; font-family: 'Georgia', serif; overflow: hidden; }
         
-        /* Start Overlay */
-        #start-overlay { position: fixed; inset: 0; background: radial-gradient(circle, #1a1a1a, #000); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .start-btn { padding: 20px 50px; font-size: 28px; cursor: pointer; background: #c6a02e; border: none; border-radius: 50px; color: white; font-weight: bold; box-shadow: 0 0 20px rgba(198, 160, 46, 0.5); transition: 0.3s; }
-        .start-btn:hover { transform: scale(1.1); background: #e2ba46; }
-
-        /* Slideshow Container */
-        #slideshow { position: relative; width: 100vw; height: 100vh; }
-        .slide { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 1.5s ease-in-out; }
-        .slide.active { display: flex; opacity: 1; }
-
-        /* Cinematic Zoom Animation */
-        .slide img { 
-            max-width: 90%; max-height: 85vh; 
-            border: 4px solid #222; 
-            border-radius: 4px;
-            transform: scale(1);
-            transition: transform 6s linear; 
+        /* Cinematic Film Grain Overlay */
+        body::after {
+            content: ""; position: fixed; inset: 0; 
+            background: url('https://www.transparenttextures.com/patterns/stardust.png');
+            opacity: 0.1; pointer-events: none; z-index: 50;
         }
-        .slide.active img { transform: scale(1.1); }
-        
-        video { max-width: 90%; max-height: 85vh; border: 2px solid #c6a02e; }
 
-        /* Farewell Text Box */
-        .farewell-text { text-align: center; padding: 60px; background: rgba(0,0,0,0.85); border: 3px solid #c6a02e; border-radius: 20px; max-width: 800px; }
-        h1.gold-title { color: #c6a02e; font-size: 3.5rem; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 3px; }
-        p.message { font-size: 2rem; line-height: 1.6; color: #f0f0f0; font-style: italic; }
+        /* Start Screen */
+        #start-overlay { 
+            position: fixed; inset: 0; background: #000; z-index: 1000; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        }
+        .play-btn { 
+            padding: 15px 50px; font-size: 1.5rem; cursor: pointer; 
+            background: transparent; border: 2px solid var(--gold); color: var(--gold);
+            border-radius: 5px; text-transform: uppercase; letter-spacing: 5px; transition: 0.5s;
+        }
+        .play-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 30px var(--gold); }
+
+        /* Slideshow */
+        #viewport { position: relative; width: 100vw; height: 100vh; perspective: 1000px; }
+        .slide { 
+            position: absolute; inset: 0; display: none; 
+            align-items: center; justify-content: center; 
+            opacity: 0; transform: scale(1.1) rotateY(5deg);
+            transition: opacity 2s ease, transform 2s ease;
+        }
+        .slide.active { display: flex; opacity: 1; transform: scale(1) rotateY(0deg); }
+
+        /* Movie Zoom Effect */
+        .slide img { 
+            max-width: 85%; max-height: 80vh; border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 100px rgba(0,0,0,0.8);
+            animation: kenburns var(--speed) infinite alternate ease-in-out;
+        }
+        @keyframes kenburns {
+            from { transform: scale(1) translate(0,0); }
+            to { transform: scale(1.1) translate(-1%, -1%); }
+        }
+
+        video { max-width: 90%; max-height: 85vh; outline: 1px solid var(--gold); }
+
+        /* Text Animation */
+        .farewell-box { 
+            text-align: center; opacity: 0; transform: translateY(50px);
+            transition: 2s all ease 1s; 
+        }
+        .slide.active .farewell-box { opacity: 1; transform: translateY(0); }
+        
+        .title-card { font-size: 4rem; color: var(--gold); letter-spacing: 8px; margin-bottom: 20px; }
+        .sub-text { font-size: 1.8rem; line-height: 1.8; color: #ccc; max-width: 800px; }
     </style>
 </head>
 <body>
@@ -39,11 +65,11 @@
 <audio id="bgMusic" src="audio.mp3" loop></audio>
 
 <div id="start-overlay">
-    <h1 style="margin-bottom: 30px; letter-spacing: 2px;">OFFICER SURPRISE TRIBUTE</h1>
-    <button class="start-btn" onclick="startShow()">BEGIN PRESENTATION</button>
+    <h1 style="letter-spacing: 10px; font-weight: 100; margin-bottom: 50px;">A TRIBUTE TO LEADERSHIP</h1>
+    <button class="play-btn" onclick="runMovie()">Play Movie</button>
 </div>
 
-<div id="slideshow">
+<div id="viewport">
     <div class="slide active"><img src="1.JPG"></div>
     <div class="slide"><video src="2.MOV"></video></div>
     <div class="slide"><video src="3.MOV"></video></div>
@@ -82,14 +108,15 @@
     <div class="slide"><img src="111.jpg"></div>
     <div class="slide"><img src="112.jpg"></div>
     <div class="slide"><img src="113.jpg"></div>
-    
+
     <div class="slide">
-        <div class="farewell-text">
-            <h1 class="gold-title">Welcome Home!</h1>
-            <p class="message">Congratulations on your new assignment.<br><br>
-            While we will deeply miss your leadership and friendship here, 
-            we are overjoyed that your journey is leading you back home.<br><br>
-            Thank you for your service and the memories we’ve shared.</p>
+        <div class="farewell-box">
+            <h1 class="title-card">Welcome Home</h1>
+            <p class="sub-text">
+                Congratulations on your new assignment.<br>
+                Your journey brings you back home, and though we part ways here,<br>
+                your impact remains. Thank you for the memories.
+            </p>
         </div>
     </div>
 </div>
@@ -98,51 +125,38 @@
     const slides = document.querySelectorAll('.slide');
     const music = document.getElementById('bgMusic');
     let i = 0;
-    const imgTime = 5000; // Time in milliseconds for each image (5 seconds)
 
-    function startShow() {
-        document.getElementById('start-overlay').style.display = 'none';
+    function runMovie() {
+        document.getElementById('start-overlay').style.opacity = '0';
+        setTimeout(() => document.getElementById('start-overlay').style.display = 'none', 1000);
         music.play();
-        showNext();
+        showSlide();
     }
 
-    function showNext() {
-        slides.forEach(s => {
-            s.classList.remove('active');
-            s.style.display = 'none';
-        });
-
+    function showSlide() {
+        slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+        
         const current = slides[i];
         current.style.display = 'flex';
-        
-        // Timeout allows the display:flex to register so the opacity transition works
-        setTimeout(() => {
-            current.classList.add('active');
-        }, 50);
+        setTimeout(() => current.classList.add('active'), 50);
 
-        const video = current.querySelector('video');
-        if (video) {
-            music.volume = 0.15; // Lower music for video
-            video.currentTime = 0;
-            video.play();
-            video.onended = () => { 
-                music.volume = 1.0; 
-                next(); 
-            };
+        const vid = current.querySelector('video');
+        if (vid) {
+            music.volume = 0.1; // Duck audio for video
+            vid.play();
+            vid.onended = () => { music.volume = 1; next(); };
         } else {
-            setTimeout(next, imgTime);
+            setTimeout(next, 5000); // Show image for 5 seconds
         }
     }
 
     function next() {
         if (i < slides.length - 1) {
             i++;
-            showNext();
-        } else {
-            // Stop at the last farewell slide
-            console.log("Presentation Finished");
+            showSlide();
         }
     }
 </script>
+
 </body>
 </html>
