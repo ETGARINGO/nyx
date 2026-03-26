@@ -2,74 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Officer's Journey - The Movie</title>
+    <title>The Homecoming Tribute</title>
     <style>
-        :root { --gold: #c6a02e; --speed: 6s; }
-        body { margin: 0; background: #000; color: #fff; font-family: 'Georgia', serif; overflow: hidden; }
+        :root { --accent: #d4af37; --bg: #050505; --text: #f5f5f5; }
+        body, html { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Times New Roman', serif; overflow: hidden; height: 100%; }
+
+        /* Cinematic Overlays */
+        .overlay-vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 20%, black 150%); z-index: 10; pointer-events: none; }
+        .light-leak { position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(212,175,55,0.05) 0%, transparent 70%); animation: moveLeak 20s infinite alternate; z-index: 11; pointer-events: none; }
+
+        @keyframes moveLeak { from { transform: translate(-10%, -10%); } to { transform: translate(10%, 10%); } }
+
+        /* Entrance Screen */
+        #gate { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 2s; }
+        .gate-title { letter-spacing: 12px; font-size: 1.5rem; margin-bottom: 40px; opacity: 0.8; }
+        .start-btn { padding: 15px 60px; background: transparent; border: 1px solid var(--accent); color: var(--accent); cursor: pointer; letter-spacing: 4px; transition: 0.5s; }
+        .start-btn:hover { background: var(--accent); color: black; box-shadow: 0 0 40px rgba(212,175,55,0.3); }
+
+        /* Presentation Stage */
+        #stage { position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .slide { position: absolute; inset: 0; opacity: 0; display: flex; align-items: center; justify-content: center; transition: opacity 2.5s ease; visibility: hidden; }
+        .slide.active { opacity: 1; visibility: visible; }
+
+        /* Dynamic Motion Effects */
+        .slide img { max-width: 80%; max-height: 80vh; border: 1px solid rgba(255,255,255,0.1); filter: contrast(1.1); transform: scale(1.2); transition: transform 8s linear; }
+        .slide.active img { transform: scale(1.0); } /* Pull-back zoom effect */
         
-        /* Cinematic Film Grain Overlay */
-        body::after {
-            content: ""; position: fixed; inset: 0; 
-            background: url('https://www.transparenttextures.com/patterns/stardust.png');
-            opacity: 0.1; pointer-events: none; z-index: 50;
-        }
+        /* Video Styling */
+        video { max-width: 90%; max-height: 85vh; outline: 1px solid var(--accent); box-shadow: 0 0 60px rgba(0,0,0,0.9); }
 
-        /* Start Screen */
-        #start-overlay { 
-            position: fixed; inset: 0; background: #000; z-index: 1000; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-        }
-        .play-btn { 
-            padding: 15px 50px; font-size: 1.5rem; cursor: pointer; 
-            background: transparent; border: 2px solid var(--gold); color: var(--gold);
-            border-radius: 5px; text-transform: uppercase; letter-spacing: 5px; transition: 0.5s;
-        }
-        .play-btn:hover { background: var(--gold); color: #000; box-shadow: 0 0 30px var(--gold); }
-
-        /* Slideshow */
-        #viewport { position: relative; width: 100vw; height: 100vh; perspective: 1000px; }
-        .slide { 
-            position: absolute; inset: 0; display: none; 
-            align-items: center; justify-content: center; 
-            opacity: 0; transform: scale(1.1) rotateY(5deg);
-            transition: opacity 2s ease, transform 2s ease;
-        }
-        .slide.active { display: flex; opacity: 1; transform: scale(1) rotateY(0deg); }
-
-        /* Movie Zoom Effect */
-        .slide img { 
-            max-width: 85%; max-height: 80vh; border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 0 100px rgba(0,0,0,0.8);
-            animation: kenburns var(--speed) infinite alternate ease-in-out;
-        }
-        @keyframes kenburns {
-            from { transform: scale(1) translate(0,0); }
-            to { transform: scale(1.1) translate(-1%, -1%); }
-        }
-
-        video { max-width: 90%; max-height: 85vh; outline: 1px solid var(--gold); }
-
-        /* Text Animation */
-        .farewell-box { 
-            text-align: center; opacity: 0; transform: translateY(50px);
-            transition: 2s all ease 1s; 
-        }
-        .slide.active .farewell-box { opacity: 1; transform: translateY(0); }
-        
-        .title-card { font-size: 4rem; color: var(--gold); letter-spacing: 8px; margin-bottom: 20px; }
-        .sub-text { font-size: 1.8rem; line-height: 1.8; color: #ccc; max-width: 800px; }
+        /* Final Message styling */
+        .credits { text-align: center; max-width: 800px; padding: 40px; }
+        .credits h1 { font-size: 4rem; color: var(--accent); font-weight: 100; margin-bottom: 20px; letter-spacing: 5px; }
+        .credits p { font-size: 1.8rem; line-height: 1.8; opacity: 0.9; font-style: italic; }
     </style>
 </head>
 <body>
 
-<audio id="bgMusic" src="audio.mp3" loop></audio>
+<audio id="masterAudio" src="audio.mp3" loop></audio>
 
-<div id="start-overlay">
-    <h1 style="letter-spacing: 10px; font-weight: 100; margin-bottom: 50px;">A TRIBUTE TO LEADERSHIP</h1>
-    <button class="play-btn" onclick="runMovie()">Play Movie</button>
+<div id="gate">
+    <div class="gate-title">A SPECIAL TRIBUTE</div>
+    <button class="start-btn" onclick="ignite()">PLAY FILM</button>
 </div>
 
-<div id="viewport">
+<div class="overlay-vignette"></div>
+<div class="light-leak"></div>
+
+<div id="stage">
     <div class="slide active"><img src="1.JPG"></div>
     <div class="slide"><video src="2.MOV"></video></div>
     <div class="slide"><video src="3.MOV"></video></div>
@@ -110,50 +90,50 @@
     <div class="slide"><img src="113.jpg"></div>
 
     <div class="slide">
-        <div class="farewell-box">
-            <h1 class="title-card">Welcome Home</h1>
-            <p class="sub-text">
-                Congratulations on your new assignment.<br>
-                Your journey brings you back home, and though we part ways here,<br>
-                your impact remains. Thank you for the memories.
-            </p>
+        <div class="credits">
+            <h1>Welcome Home</h1>
+            <p>Congratulations on your new assignment.<br>
+            The road back home is the sweetest one of all.<br>
+            Thank you for being part of our team and for leaving us better than you found us.</p>
         </div>
     </div>
 </div>
 
 <script>
     const slides = document.querySelectorAll('.slide');
-    const music = document.getElementById('bgMusic');
-    let i = 0;
+    const audio = document.getElementById('masterAudio');
+    let idx = 0;
 
-    function runMovie() {
-        document.getElementById('start-overlay').style.opacity = '0';
-        setTimeout(() => document.getElementById('start-overlay').style.display = 'none', 1000);
-        music.play();
-        showSlide();
+    function ignite() {
+        document.getElementById('gate').style.opacity = '0';
+        setTimeout(() => document.getElementById('gate').style.display = 'none', 2000);
+        audio.play();
+        playSequence();
     }
 
-    function showSlide() {
-        slides.forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
-        
-        const current = slides[i];
-        current.style.display = 'flex';
-        setTimeout(() => current.classList.add('active'), 50);
+    function playSequence() {
+        slides.forEach(s => s.classList.remove('active'));
+        const current = slides[idx];
+        current.classList.add('active');
 
-        const vid = current.querySelector('video');
-        if (vid) {
-            music.volume = 0.1; // Duck audio for video
-            vid.play();
-            vid.onended = () => { music.volume = 1; next(); };
+        const video = current.querySelector('video');
+        if (video) {
+            audio.animate([{volume: audio.volume}, {volume: 0.1}], {duration: 1000, fill: 'forwards'});
+            video.currentTime = 0;
+            video.play();
+            video.onended = () => {
+                audio.animate([{volume: 0.1}, {volume: 1.0}], {duration: 1000, fill: 'forwards'});
+                next();
+            };
         } else {
-            setTimeout(next, 5000); // Show image for 5 seconds
+            setTimeout(next, 6000); // 6 seconds per photo for a slow, cinematic feel
         }
     }
 
     function next() {
-        if (i < slides.length - 1) {
-            i++;
-            showSlide();
+        if (idx < slides.length - 1) {
+            idx++;
+            playSequence();
         }
     }
 </script>
