@@ -3,231 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mission Accomplished | Officer Farewell</title>
+    <title>Mission Accomplished | Tactical Gallery</title>
     <style>
         :root { 
             --gold: #d4af37; 
             --gold-glow: rgba(212, 175, 55, 0.8);
             --bg: #050505; 
-            --police-blue: #003366;
+            --police-blue: rgba(0, 51, 102, 0.5);
+            --panel-bg: rgba(0, 20, 40, 0.8);
         }
 
         body, html { 
             margin: 0; padding: 0; 
             background: var(--bg); 
             color: white; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            font-family: 'Consolas', 'Courier New', monospace; 
             overflow: hidden; 
             height: 100%; 
         }
 
-        /* Tactical Background Effect */
-        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.3; pointer-events: none; }
-        
+        /* Tactical HUD Background */
+        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.3; }
         .vignette { 
             position: fixed; inset: 0; 
-            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%); 
+            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.9) 100%); 
             z-index: 10; pointer-events: none; 
         }
 
-        /* Scanner Line Effect */
-        .scanner {
-            position: fixed; top: 0; left: 0; width: 100%; height: 2px;
-            background: var(--gold); box-shadow: 0 0 15px var(--gold);
-            z-index: 15; opacity: 0.5;
-            animation: scan 4s linear infinite;
-            pointer-events: none;
+        /* Layout Container */
+        #main-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            height: 100vh;
+            gap: 20px;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 20;
+            position: relative;
         }
 
-        @keyframes scan {
-            0% { top: 0%; }
-            100% { top: 100%; }
+        /* Sidebar: Digital Archive List */
+        #sidebar {
+            border-right: 1px solid var(--police-blue);
+            overflow-y: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding-right: 15px;
         }
 
-        /* Animated Subtitles */
+        .thumb-link {
+            width: 100%;
+            height: 120px;
+            border: 1px solid var(--police-blue);
+            background: var(--panel-bg);
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.5s ease;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .thumb-link.visible {
+            opacity: 0.5;
+            transform: translateX(0);
+        }
+
+        .thumb-link.active {
+            opacity: 1;
+            border: 2px solid var(--gold);
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        .thumb-link img {
+            width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%);
+        }
+
+        .thumb-link.active img { filter: grayscale(0%); }
+
+        /* Stage: Main Viewport */
+        #stage {
+            position: relative;
+            background: var(--panel-bg);
+            border: 1px solid var(--police-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 1s ease-in-out;
+            padding: 40px;
+        }
+
+        .slide.active { 
+            opacity: 1; 
+            animation: scanIn 0.8s ease-out forwards;
+        }
+
+        @keyframes scanIn {
+            from { clip-path: inset(0 100% 0 0); }
+            to { clip-path: inset(0 0 0 0); }
+        }
+
+        .slide img, .slide video {
+            max-width: 95%;
+            max-height: 85vh;
+            border: 2px solid var(--gold);
+            box-shadow: 0 0 30px rgba(0,0,0,1);
+        }
+
+        /* Subtitles */
         #lyric-container {
-            position: fixed; bottom: 10%; width: 100%;
-            text-align: center; z-index: 100;
+            position: fixed;
+            bottom: 5%;
+            right: 5%;
+            width: 60%;
+            text-align: right;
+            z-index: 100;
         }
 
         .subtitle-text {
-            font-size: 2.8rem; font-weight: 900;
-            text-transform: uppercase; letter-spacing: -1px;
-            color: #fff; text-shadow: 4px 4px 0px var(--police-blue);
-            opacity: 0; transform: scale(0.5);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .subtitle-text.active {
-            opacity: 1; transform: scale(1) rotate(-2deg);
-        }
-
-        /* Intro / Gate Screen */
-        #gate { 
-            position: fixed; inset: 0; background: #000;
-            z-index: 1000; display: flex; align-items: center; justify-content: center; 
-            transition: opacity 1s ease;
-        }
-
-        .gate-card { 
-            text-align: center; padding: 60px;
-            border: 2px solid var(--gold); background: rgba(0, 20, 40, 0.9);
-            box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
-        }
-
-        .start-btn { 
-            margin-top: 30px; padding: 15px 50px; 
-            background: var(--gold); border: none; 
-            color: black; font-weight: bold; font-size: 1.2rem; cursor: pointer; 
-            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            font-size: 2.2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-shadow: 2px 2px 0px #000;
+            opacity: 0;
             transition: 0.3s;
         }
 
-        .start-btn:hover { transform: scale(1.1); background: white; }
+        .subtitle-text.active { opacity: 1; }
 
-        /* Stage Styling */
-        #stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-        .slide { 
-            position: absolute; inset: 0; opacity: 0; 
-            display: flex; align-items: center; justify-content: center; 
-            transition: opacity 1s ease-in-out; 
+        /* Final Box Styling */
+        .final-box h1 { font-size: 3.5rem; color: var(--gold); }
+
+        /* Gate */
+        #gate { 
+            position: fixed; inset: 0; background: #000;
+            z-index: 1000; display: flex; align-items: center; justify-content: center; 
         }
-        .slide.active { opacity: 1; }
-
-        .slide img, .slide video { 
-            max-width: 85%; max-height: 75vh; 
-            border: 8px solid white; box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
-            transform: rotate(1deg);
+        .gate-card { 
+            text-align: center; padding: 40px; border: 1px solid var(--gold); 
+            background: var(--panel-bg); 
         }
-
-        .final-box h1 { font-size: 4rem; color: var(--gold); text-shadow: 0 0 20px var(--gold); margin: 10px 0; }
+        .start-btn { 
+            background: var(--gold); padding: 10px 30px; border: none; cursor: pointer; font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <div id="particles-js"></div>
-<div class="scanner"></div>
 <div class="vignette"></div>
 
 <audio id="bgMusic" src="Walking in the Wind - One Direction (Lyrics) - Little Peach (128k).mp3"></audio>
+
+<div id="gate">
+    <div class="gate-card">
+        <h1 style="color: var(--gold); margin:0;">SYSTEM AUTHORIZATION</h1>
+        <p style="letter-spacing: 3px; opacity: 0.7;">INITIALIZING PERSONNEL ARCHIVE</p>
+        <button class="start-btn" onclick="ignite()">START MISSION DEBRIEF</button>
+    </div>
+</div>
+
+<div id="main-layout">
+    <div id="sidebar">
+        </div>
+
+    <div id="stage">
+        <div class="slide active"><img src="1.JPG"></div>
+        <div class="slide"><video src="2.MOV" muted></video></div>
+        <div class="slide"><video src="3.MOV" muted></video></div>
+        <div class="slide"><video src="4.MOV" muted></video></div>
+        <div class="slide"><img src="5.JPEG"></div>
+        <div class="slide"><img src="6.JPEG"></div>
+        <div class="slide"><img src="7.JPEG"></div>
+        <div class="slide"><img src="8.JPEG"></div>
+        <div class="slide"><img src="9.JPEG"></div>
+        <div class="slide"><img src="10.JPEG"></div>
+        <div class="slide"><img src="11.JPEG"></div>
+        <div class="slide"><img src="12.JPEG"></div>
+        <div class="slide"><img src="13.JPEG"></div>
+        <div class="slide"><img src="14.JPEG"></div>
+        <div class="slide"><img src="15.JPEG"></div>
+        <div class="slide"><img src="16.JPEG"></div>
+        <div class="slide"><img src="17.JPEG"></div>
+        <div class="slide"><img src="18.JPG"></div>
+        <div class="slide"><img src="19.JPG"></div>
+        <div class="slide"><img src="20.JPG"></div>
+        <div class="slide"><img src="21.JPEG"></div>
+        <div class="slide"><img src="22.JPEG"></div>
+        <div class="slide"><img src="23.JPEG"></div>
+        <div class="slide"><img src="24.JPEG"></div>
+        <div class="slide"><img src="25.JPG"></div>
+        <div class="slide"><img src="26.JPG"></div>
+        <div class="slide"><img src="27.JPG"></div>
+        <div class="slide"><img src="28.JPG"></div>
+        <div class="slide"><img src="29.JPG"></div>
+        <div class="slide"><img src="30.JPG"></div>
+        <div class="slide"><img src="31.JPEG"></div>
+        <div class="slide"><img src="31.JPG"></div>
+        <div class="slide"><img src="32.JPEG"></div>
+        <div class="slide"><img src="33(1).JPEG"></div>
+        <div class="slide"><img src="33.JPEG"></div>
+        <div class="slide"><img src="111.jpg"></div>
+        <div class="slide"><img src="112.jpg"></div>
+        <div class="slide"><img src="113.jpg"></div>
+
+        <div class="slide">
+            <div class="final-box" style="text-align: center;">
+                <p style="letter-spacing: 12px; opacity: 0.7;">STATUS: MISSION ACCOMPLISHED</p>
+                <h1>MA'AM NYX POSTRANO</h1>
+                <p style="font-style: italic;">"New Unit, Same Legend."</p>
+                <div style="width: 80px; height: 2px; background: var(--gold); margin: 20px auto;"></div>
+                <p>SAFE TRAVELS, MA'AM GANDA! 🫡</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="lyric-container">
     <div id="subtitle" class="subtitle-text"></div>
 </div>
 
-<div id="gate">
-    <div class="gate-card">
-        <h1 style="color: var(--gold); margin:0;">MISSION DEBRIEF</h1>
-        <p style="letter-spacing: 5px; opacity: 0.7;">CASE FILE: OUTGOING ELITE OFFICER</p>
-        <button class="start-btn" onclick="ignite()">AUTHORIZE ACCESS</button>
-    </div>
-</div>
-
-<div id="stage">
-    <div class="slide active"><img src="1.JPG"></div>
-    <div class="slide"><video src="2.MOV" muted></video></div>
-    <div class="slide"><video src="3.MOV" muted></video></div>
-    <div class="slide"><video src="4.MOV" muted></video></div>
-    <div class="slide"><img src="5.JPEG"></div>
-    <div class="slide"><img src="6.JPEG"></div>
-    <div class="slide"><img src="7.JPEG"></div>
-    <div class="slide"><img src="8.JPEG"></div>
-    <div class="slide"><img src="9.JPEG"></div>
-    <div class="slide"><img src="10.JPEG"></div>
-    <div class="slide"><img src="11.JPEG"></div>
-    <div class="slide"><img src="12.JPEG"></div>
-    <div class="slide"><img src="13.JPEG"></div>
-    <div class="slide"><img src="14.JPEG"></div>
-    <div class="slide"><img src="15.JPEG"></div>
-    <div class="slide"><img src="16.JPEG"></div>
-    <div class="slide"><img src="17.JPEG"></div>
-    <div class="slide"><img src="18.JPG"></div>
-    <div class="slide"><img src="19.JPG"></div>
-    <div class="slide"><img src="20.JPG"></div>
-    <div class="slide"><img src="21.JPEG"></div>
-    <div class="slide"><img src="22.JPEG"></div>
-    <div class="slide"><img src="23.JPEG"></div>
-    <div class="slide"><img src="24.JPEG"></div>
-    <div class="slide"><img src="25.JPG"></div>
-    <div class="slide"><img src="26.JPG"></div>
-    <div class="slide"><img src="27.JPG"></div>
-    <div class="slide"><img src="28.JPG"></div>
-    <div class="slide"><img src="29.JPG"></div>
-    <div class="slide"><img src="30.JPG"></div>
-    <div class="slide"><img src="31.JPEG"></div>
-    <div class="slide"><img src="31.JPG"></div>
-    <div class="slide"><img src="32.JPEG"></div>
-    <div class="slide"><img src="33(1).JPEG"></div>
-    <div class="slide"><img src="33.JPEG"></div>
-    <div class="slide"><img src="111.jpg"></div>
-    <div class="slide"><img src="112.jpg"></div>
-    <div class="slide"><img src="113.jpg"></div>
-
-    <div class="slide">
-        <div class="final-box" style="text-align: center;">
-            <p style="letter-spacing: 12px; margin-bottom: 10px; opacity: 0.7;">STATUS: MISSION ACCOMPLISHED</p>
-            <h1>MA'AM NYX POSTRANO</h1>
-            <p style="opacity: 0.9; margin-top: 20px; font-size: 1.3rem; letter-spacing: 3px; font-style: italic;">
-                "New Unit, Same Legend."
-            </p>
-            <div style="width: 80px; height: 3px; background: var(--gold); margin: 25px auto; box-shadow: 0 0 15px var(--gold);"></div>
-            <p style="opacity: 0.6; line-height: 1.6;">
-                You are leaving behind a legacy of great memories.<br>
-                Your next chapter begins today.
-            </p>
-        </div>
-    </div>
-</div>
-
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
     const slides = document.querySelectorAll('.slide');
+    const sidebar = document.getElementById('sidebar');
     const music = document.getElementById('bgMusic');
     const subtitle = document.getElementById('subtitle');
     let currentIdx = 0;
 
+    // Build sidebar thumbnails
+    slides.forEach((s, idx) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'thumb-link';
+        const img = s.querySelector('img');
+        if(img) {
+            const clone = img.cloneNode();
+            thumb.appendChild(clone);
+        } else {
+            thumb.innerHTML = `<div style="padding:20px; font-size:10px;">VIDEO_FILE</div>`;
+        }
+        sidebar.appendChild(thumb);
+    });
+
+    const thumbs = document.querySelectorAll('.thumb-link');
+
     const lyrics = [
-        { time: 0, text: "TARGET IDENTIFIED: ONE TOP-TIER OFFICER" },
+        { time: 0, text: "TARGET IDENTIFIED: MA'AM NYX POSTRANO" },
         { time: 5, text: "PREPARE FOR EMOTIONAL BACKUP" },
         { time: 14, text: "A week ago you said to us..." },
-        { time: 18, text: "Who's gonna handle all the paperwork now?" },
+        { time: 18, text: "Who's gonna handle all the paperwork?" },
         { time: 23, text: "If we're lost, don't call us..." },
-        { time: 26, text: "Because you're off the clock!" },
+        { time: 26, text: "Because you're officially off the clock!" },
         { time: 31, text: "Transferring to a new beat" },
-        { time: 35, text: "But the legend stays here" },
-        { time: 41, text: "We'll see you... at the next reunion" },
         { time: 46, text: "WALKING INTO THE NEW UNIT" },
-        { time: 50, text: "SMILING AT THE LACK OF DUTY" },
         { time: 54, text: "YOU'LL BE GREATLY MISSED" },
-        { time: 58, text: "ESPECIALLY BY THE MOMENT OF HAVING YOU FOR US" },
         { time: 65, text: "EVIDENCE OF A CAREER WELL SPENT" },
-        { time: 80, text: "NEW HORIZONS AHEAD!" },
-        { time: 105, text: "CASE CLOSED: YOU WERE THE BEST" },
-        { time: 138, text: "ENJOY THE NEW CHAPTER" },
-        { time: 155, text: "YOUR MISSION CONTINUES ELSEWHERE" },
         { time: 198, text: "SAFE TRAVELS, MA'AM GANDA 🫡" }
     ];
 
     particlesJS("particles-js", {
-        "particles": {
-            "number": { "value": 100 },
-            "color": { "value": "#ffffff" },
-            "opacity": { "value": 0.2 },
-            "size": { "value": 1 },
-            "move": { "enable": true, "speed": 1 }
-        }
+        "particles": { "number": { "value": 60 }, "color": { "value": "#d4af37" }, "move": { "speed": 1 } }
     });
 
     function ignite() {
-        document.getElementById('gate').style.opacity = '0';
-        setTimeout(() => document.getElementById('gate').style.display = 'none', 1000);
+        document.getElementById('gate').style.display = 'none';
         music.play();
         runEngine();
         
         music.ontimeupdate = () => {
             const current = music.currentTime;
             const active = lyrics.reduce((prev, curr) => (curr.time <= current) ? curr : prev, null);
-            
             if (active && subtitle.innerText !== active.text) {
                 subtitle.classList.remove('active');
                 setTimeout(() => {
@@ -239,22 +295,27 @@
     }
 
     function runEngine() {
-        slides.forEach(s => {
+        slides.forEach((s, i) => {
             s.classList.remove('active');
+            thumbs[i].classList.remove('active');
             const v = s.querySelector('video');
             if(v) v.pause();
         });
-        
-        const slide = slides[currentIdx];
-        slide.classList.add('active');
 
-        const video = slide.querySelector('video');
+        slides[currentIdx].classList.add('active');
+        thumbs[currentIdx].classList.add('active');
+        thumbs[currentIdx].classList.add('visible');
+        
+        // Scroll sidebar to current thumb
+        thumbs[currentIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        const video = slides[currentIdx].querySelector('video');
         if (video) {
             video.currentTime = 0;
             video.play();
             video.onended = advance;
         } else {
-            setTimeout(advance, 5000);
+            setTimeout(advance, 4000);
         }
     }
 
