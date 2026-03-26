@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Journey Home | Official Tribute</title>
+    <title>Tribute to Miss Nyx Postrano</title>
     <style>
         :root { 
             --gold: #d4af37; 
-            --gold-glow: rgba(212, 175, 55, 0.4);
+            --gold-glow: rgba(212, 175, 55, 0.5);
             --bg: #050505; 
         }
 
@@ -20,10 +20,10 @@
             height: 100%; 
         }
 
-        /* Particles & Atmosphere */
-        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.4; }
+        /* Floating Atmosphere */
+        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.35; }
         
-        /* Camera Flash Effect */
+        /* Camera Shutter Flash */
         #shutter { 
             position: fixed; inset: 0; 
             background: white; z-index: 999; 
@@ -32,7 +32,7 @@
 
         .vignette { 
             position: fixed; inset: 0; 
-            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.9) 100%); 
+            background: radial-gradient(circle, transparent 10%, rgba(0,0,0,0.95) 100%); 
             z-index: 10; pointer-events: none; 
         }
 
@@ -42,26 +42,27 @@
             background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
             z-index: 1000; display: flex; 
             align-items: center; justify-content: center; 
-            transition: 2s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: 2.5s cubic-bezier(0.4, 0, 0.2, 1); 
         }
 
         .gate-card { 
-            text-align: center; padding: 60px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            background: rgba(255,255,255,0.03);
-            backdrop-filter: blur(10px);
+            text-align: center; padding: 70px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 100px rgba(0,0,0,0.5);
         }
 
         .start-btn { 
-            margin-top: 30px; padding: 15px 50px; 
+            margin-top: 40px; padding: 18px 65px; 
             background: transparent; border: 1px solid var(--gold); 
-            color: var(--gold); font-size: 1.1rem; cursor: pointer; 
-            letter-spacing: 6px; transition: 0.4s; text-transform: uppercase;
+            color: var(--gold); font-size: 1rem; cursor: pointer; 
+            letter-spacing: 7px; transition: 0.5s; text-transform: uppercase;
         }
 
         .start-btn:hover { 
             background: var(--gold); color: black; 
-            box-shadow: 0 0 40px var(--gold-glow); 
+            box-shadow: 0 0 50px var(--gold-glow); 
         }
 
         /* Slide Engine */
@@ -73,49 +74,52 @@
         .slide { 
             position: absolute; inset: 0; opacity: 0; 
             display: flex; align-items: center; justify-content: center; 
-            transition: opacity 1.5s ease-in-out; visibility: hidden; 
+            transition: opacity 1.8s ease-in-out; visibility: hidden; 
         }
 
         .slide.active { opacity: 1; visibility: visible; }
 
-        /* Slow Cinematic Drift (Ken Burns) */
+        /* Smooth Cinematic Motion */
         .slide img { 
-            max-width: 85%; max-height: 80vh; 
+            max-width: 80%; max-height: 80vh; 
             object-fit: contain; 
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            filter: drop-shadow(0 10px 50px rgba(0,0,0,1));
             transform: scale(1.1);
         }
 
         .slide.active img { 
-            animation: drift 8s linear forwards; 
+            animation: kenburns 10s linear forwards; 
         }
 
-        @keyframes drift {
-            from { transform: scale(1.08) translateY(0); }
-            to { transform: scale(1.0) translateY(-15px); }
+        @keyframes kenburns {
+            from { transform: scale(1.12) translateY(10px); }
+            to { transform: scale(1.0) translateY(-10px); }
         }
 
         video { 
-            max-width: 90%; max-height: 85vh; 
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            box-shadow: 0 0 100px black;
+            max-width: 85%; max-height: 85vh; 
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 80px rgba(0,0,0,1);
         }
 
-        /* Final Message */
+        /* Final Dedicated Message */
         .final-box h1 { 
-            font-size: 5rem; 
-            letter-spacing: 15px; 
+            font-size: clamp(2.5rem, 6vw, 5.5rem); 
+            letter-spacing: 12px; 
             text-transform: uppercase;
-            color: var(--gold);
+            background: linear-gradient(to bottom, #f1d592, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin: 0;
-            text-shadow: 0 0 30px var(--gold-glow);
+            filter: drop-shadow(0 0 20px var(--gold-glow));
         }
         
         .final-box p { 
-            font-family: sans-serif; 
-            letter-spacing: 5px; 
-            opacity: 0.6; 
-            margin-top: 20px;
+            font-family: 'Segoe UI', sans-serif; 
+            letter-spacing: 4px; 
+            opacity: 0.5; 
+            margin-top: 15px;
+            text-transform: uppercase;
         }
     </style>
 </head>
@@ -127,9 +131,10 @@
 
 <div id="gate">
     <div class="gate-card">
-        <h1 style="letter-spacing: 12px; font-weight: 100; color: var(--gold); margin-bottom: 5px;">WALKING IN THE WIND</h1>
-        <p style="opacity: 0.5; font-size: 0.9rem; letter-spacing: 4px;">A TRIBUTE TO OUR OFFICER</p>
-        <button class="start-btn" onclick="ignite()">Start Journey</button>
+        <h1 style="letter-spacing: 14px; font-weight: 100; color: var(--gold); margin-bottom: 5px;">WALKING IN THE WIND</h1>
+        <p style="opacity: 0.6; font-size: 1.1rem; letter-spacing: 5px; color: white;">A TRIBUTE TO</p>
+        <h2 style="font-size: 2.8rem; color: var(--gold); margin: 15px 0; letter-spacing: 3px;">MISS NYX POSTRANO</h2>
+        <button class="start-btn" onclick="ignite()">Begin the Journey</button>
     </div>
 </div>
 
@@ -177,8 +182,9 @@
 
     <div class="slide">
         <div class="final-box" style="text-align: center;">
-            <h1>Welcome Home</h1>
-            <p>Your journey is just beginning.</p>
+            <p>Welcome Home</p>
+            <h1>MISS NYX POSTRANO</h1>
+            <p>Your new chapter begins now.<br>Safe travels in your hometown assignment.</p>
         </div>
     </div>
 </div>
@@ -190,29 +196,37 @@
     const shutter = document.getElementById('shutter');
     let currentIdx = 0;
 
-    // Dust/Particle Effect
+    // Golden Floating Dust Effect
     particlesJS("particles-js", {
         "particles": {
-            "number": { "value": 100 },
+            "number": { "value": 90 },
             "color": { "value": "#d4af37" },
             "opacity": { "value": 0.3 },
             "size": { "value": 1.5 },
-            "move": { "enable": true, "speed": 0.8, "direction": "top-right" }
+            "move": { "enable": true, "speed": 0.6, "direction": "top" }
         }
     });
 
     function ignite() {
         document.getElementById('gate').style.opacity = '0';
-        document.getElementById('gate').style.transform = 'scale(1.1)';
-        setTimeout(() => document.getElementById('gate').style.display = 'none', 2000);
+        document.getElementById('gate').style.transform = 'scale(1.15)';
+        setTimeout(() => document.getElementById('gate').style.display = 'none', 2500);
         
+        music.volume = 0;
         music.play();
+        // Fade in music smoothly
+        let vol = 0;
+        let fade = setInterval(() => {
+            if (vol < 1) { vol += 0.05; music.volume = vol; }
+            else clearInterval(fade);
+        }, 150);
+
         runEngine();
     }
 
     function triggerFlash() {
         shutter.style.opacity = '0.4';
-        setTimeout(() => { shutter.style.opacity = '0'; }, 150);
+        setTimeout(() => { shutter.style.opacity = '0'; }, 200);
     }
 
     function runEngine() {
@@ -223,17 +237,17 @@
 
         const video = slide.querySelector('video');
         if (video) {
-            // Drop music volume for video clips
-            music.animate([{volume: 1}, {volume: 0.1}], {duration: 1000, fill: 'forwards'});
+            // Lower music for video
+            music.animate([{volume: 1}, {volume: 0.1}], {duration: 1200, fill: 'forwards'});
             video.currentTime = 0;
             video.play();
             video.onended = () => {
-                music.animate([{volume: 0.1}, {volume: 1}], {duration: 1000, fill: 'forwards'});
+                music.animate([{volume: 0.1}, {volume: 1}], {duration: 1200, fill: 'forwards'});
                 advance();
             };
         } else {
-            // Photo duration: 5 seconds
-            setTimeout(advance, 5000);
+            // Each photo stays for 6 seconds
+            setTimeout(advance, 6000);
         }
     }
 
