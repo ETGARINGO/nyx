@@ -2,57 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>The Homecoming Tribute | Goodbye My Friend</title>
+    <title>The Journey Home | Lightning Edition</title>
     <style>
         :root { --gold: #d4af37; --bg: #050505; }
         body, html { margin: 0; padding: 0; background: var(--bg); color: white; font-family: 'Georgia', serif; overflow: hidden; height: 100%; }
 
-        /* Cinema Effects */
-        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 40%, black 150%); z-index: 10; pointer-events: none; }
-        .film-grain { position: fixed; inset: 0; background: url('https://www.transparenttextures.com/patterns/stardust.png'); opacity: 0.12; z-index: 11; pointer-events: none; }
-        
-        /* Entrance Gate */
-        #gate { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 2.5s ease-in-out; }
-        .gate-content { text-align: center; border: 1px solid var(--gold); padding: 60px; border-radius: 4px; }
-        .start-btn { margin-top: 30px; padding: 18px 60px; background: var(--gold); border: none; font-size: 1.3rem; cursor: pointer; font-weight: bold; letter-spacing: 4px; transition: 0.4s; }
-        .start-btn:hover { background: #fff; transform: scale(1.05); box-shadow: 0 0 50px var(--gold); }
+        /* Lightning Effect */
+        .lightning { position: fixed; inset: 0; background: white; z-index: 99; opacity: 0; pointer-events: none; }
+        @keyframes flash { 0% { opacity: 0; } 5% { opacity: 0.8; } 10% { opacity: 0; } 15% { opacity: 0.5; } 20% { opacity: 0; } }
+        .flash-it { animation: flash 0.8s ease-out; }
 
-        /* Stage and Slide Transitions */
-        #stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-        .slide { position: absolute; inset: 0; opacity: 0; display: flex; align-items: center; justify-content: center; transition: opacity 3s ease-in-out; visibility: hidden; }
+        /* Cinematic Visuals */
+        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 30%, black 150%); z-index: 10; pointer-events: none; }
+        
+        #gate { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 2s; }
+        .start-btn { padding: 20px 60px; background: var(--gold); border: none; font-size: 1.5rem; cursor: pointer; letter-spacing: 5px; font-weight: bold; }
+
+        #stage { position: relative; width: 100vw; height: 100vh; }
+        .slide { position: absolute; inset: 0; opacity: 0; display: flex; align-items: center; justify-content: center; transition: opacity 2s ease; visibility: hidden; }
         .slide.active { opacity: 1; visibility: visible; }
 
-        /* Outing Style Animation (Slow Pull-Back) */
-        .slide img { 
-            max-width: 85%; max-height: 80vh; border: 1px solid #222; 
-            box-shadow: 0 0 100px rgba(0,0,0,1);
-            transform: scale(1.15); 
-            transition: transform 10s linear; 
-        }
-        .slide.active img { transform: scale(1.0); }
-        
-        video { max-width: 90%; max-height: 85vh; outline: 1px solid var(--gold); box-shadow: 0 0 100px black; }
+        /* Auto-Fit Images */
+        .slide img { max-width: 95%; max-height: 90vh; object-fit: contain; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        video { max-width: 95%; max-height: 90vh; outline: 1px solid var(--gold); }
 
-        /* Cinematic Final Box */
-        .final-box { text-align: center; max-width: 900px; padding: 40px; }
-        .final-box h1 { font-size: 5rem; color: var(--gold); margin-bottom: 20px; font-weight: 100; letter-spacing: 12px; text-transform: uppercase; }
-        .final-box p { font-size: 2.2rem; line-height: 1.8; opacity: 0.9; font-style: italic; }
+        .final-box { text-align: center; }
+        .final-box h1 { font-size: 4rem; color: var(--gold); }
     </style>
 </head>
 <body>
 
-<audio id="bgMusic" src="audio.mp3"></audio>
+<div class="lightning" id="storm"></div>
+<audio id="bgMusic" src="audio.mp3" loop></audio>
 
 <div id="gate">
-    <div class="gate-content">
-        <h1 style="letter-spacing: 15px; color: var(--gold); margin: 0; font-weight: 100;">GOODBYE MY FRIEND</h1>
-        <p style="opacity: 0.5; margin-top: 15px; letter-spacing: 4px;">A TRIBUTE TO AN OFFICER'S JOURNEY</p>
-        <button class="start-btn" onclick="ignite()">PLAY FILM</button>
-    </div>
+    <h1 style="color:var(--gold); letter-spacing: 10px;">THE JOURNEY HOME</h1>
+    <button class="start-btn" onclick="startAll()">PLAY FILM</button>
 </div>
 
 <div class="vignette"></div>
-<div class="film-grain"></div>
 
 <div id="stage">
     <div class="slide active"><img src="1.JPG"></div>
@@ -97,9 +85,7 @@
     <div class="slide">
         <div class="final-box">
             <h1>Welcome Home</h1>
-            <p>Congratulations on your new assignment.<br>
-            While we miss you here, we are overjoyed you've returned home.<br>
-            Thank you for being our leader and our friend.</p>
+            <p>Congratulations on your new assignment.</p>
         </div>
     </div>
 </div>
@@ -107,64 +93,40 @@
 <script>
     const slides = document.querySelectorAll('.slide');
     const music = document.getElementById('bgMusic');
-    let idx = 0;
+    const storm = document.getElementById('storm');
+    let i = 0;
 
-    function ignite() {
+    function startAll() {
         document.getElementById('gate').style.opacity = '0';
-        setTimeout(() => document.getElementById('gate').style.display = 'none', 2500);
-        
-        music.volume = 1.0;
+        setTimeout(() => document.getElementById('gate').style.display = 'none', 1000);
         music.play();
-        runShow();
+        playSequence();
+        // Random Lightning Generator
+        setInterval(() => {
+            if(Math.random() > 0.8) {
+                storm.classList.add('flash-it');
+                setTimeout(() => storm.classList.remove('flash-it'), 800);
+            }
+        }, 5000);
     }
 
-    function runShow() {
+    function playSequence() {
         slides.forEach(s => s.classList.remove('active'));
-        const currentSlide = slides[idx];
-        currentSlide.classList.add('active');
+        const current = slides[i];
+        current.classList.add('active');
 
-        const video = currentSlide.querySelector('video');
+        const video = current.querySelector('video');
         if (video) {
-            // FADE OUT music for video
-            fadeVolume(music, 1.0, 0.10, 1500);
-            video.currentTime = 0;
+            music.volume = 0.2;
             video.play();
-            video.onended = () => {
-                // FADE IN music after video
-                fadeVolume(music, 0.10, 1.0, 1500);
-                advance();
-            };
+            video.onended = () => { music.volume = 1; next(); };
         } else {
-            // Photos display for 8 seconds (Better for "Goodbye My Friend" tempo)
-            setTimeout(advance, 8000);
+            setTimeout(next, 7000);
         }
     }
 
-    function fadeVolume(audio, start, end, duration) {
-        let startTime = null;
-        function step(timestamp) {
-            if (!startTime) startTime = timestamp;
-            let progress = (timestamp - startTime) / duration;
-            if (progress > 1) progress = 1;
-            audio.volume = start + (end - start) * progress;
-            if (progress < 1) requestAnimationFrame(step);
-        }
-        requestAnimationFrame(step);
-    }
-
-    function advance() {
-        if (idx < slides.length - 1) {
-            idx++;
-            runShow();
-        } else {
-            // Final Outro: Fade everything to black after the final message
-            setTimeout(() => {
-                document.body.style.transition = "5s";
-                document.body.style.backgroundColor = "black";
-                document.body.style.opacity = "0";
-                fadeVolume(music, 1.0, 0, 5000);
-            }, 10000);
-        }
+    function next() {
+        if (i < slides.length - 1) { i++; playSequence(); }
     }
 </script>
 </body>
