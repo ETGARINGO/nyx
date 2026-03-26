@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NYX POSTRANO | COMMAND CENTER V5</title>
+    <title>NYX POSTRANO | COMMAND CENTER V6</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -26,7 +26,7 @@
             height: 100%; 
         }
 
-        /* Cyber Grid Background */
+        /* Tactical Backgrounds */
         body::before {
             content: "";
             position: fixed; inset: 0;
@@ -36,7 +36,6 @@
             z-index: 0;
         }
 
-        /* Scanline Overlay Effect */
         body::after {
             content: " ";
             position: fixed; inset: 0;
@@ -47,145 +46,112 @@
         }
 
         #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.4; }
-        .vignette { 
-            position: fixed; inset: 0; 
-            background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.9) 100%); 
-            z-index: 10; pointer-events: none; 
-        }
+        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.9) 100%); z-index: 10; pointer-events: none; }
 
-        /* Layout Container */
+        /* Navigation Icon (10.JPEG) */
+        #nav-icon {
+            position: fixed; top: 25px; left: 25px; z-index: 1100;
+            width: 70px; height: 70px; border: 2px solid var(--gold);
+            cursor: pointer; background: black; overflow: hidden;
+            box-shadow: 0 0 20px var(--gold-glow);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: none; /* Hidden until HUD Ignites */
+        }
+        #nav-icon img { width: 100%; height: 100%; object-fit: cover; filter: brightness(1.2); }
+        #nav-icon:hover { transform: scale(1.1) rotate(5deg); border-color: white; }
+
+        /* Personnel Record Box */
+        #recordPanel {
+            position: absolute; bottom: 120px; left: 340px;
+            background: rgba(0, 10, 20, 0.85); border-left: 5px solid var(--gold);
+            padding: 20px 30px; width: 320px; z-index: 500;
+            backdrop-filter: blur(10px); transform: translateX(-50px);
+            opacity: 0; transition: all 0.6s ease-out;
+            pointer-events: none;
+        }
+        #recordPanel.active { opacity: 1; transform: translateX(0); }
+        #recordPanel h3 { margin: 0; color: var(--gold); font-family: var(--font-header); letter-spacing: 3px; font-size: 1.5rem; }
+        #recordPanel p { margin: 5px 0; font-size: 1rem; letter-spacing: 1px; color: rgba(255,255,255,0.8); }
+
+        /* Main Layout */
         #main-layout {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            height: 100vh;
-            gap: 20px;
-            padding: 20px;
-            box-sizing: border-box;
-            z-index: 20;
-            position: relative;
+            display: grid; grid-template-columns: 320px 1fr;
+            height: 100vh; gap: 20px; padding: 20px;
+            box-sizing: border-box; z-index: 20; position: relative;
         }
 
-        /* Sidebar: Interactive Archive */
         #sidebar {
-            background: var(--panel-bg);
-            border: 1px solid var(--gold);
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--gold) transparent;
-            box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.1);
+            background: var(--panel-bg); border: 1px solid var(--gold);
+            padding: 15px; overflow-y: auto; display: flex;
+            flex-direction: column; gap: 12px;
+            scrollbar-width: thin; scrollbar-color: var(--gold) transparent;
         }
 
         .thumb-link {
-            width: 100%; min-height: 120px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            background: #000;
-            cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            overflow: hidden; position: relative;
-            display: flex; align-items: center; justify-content: center;
+            width: 100%; min-height: 120px; border: 1px solid rgba(212, 175, 55, 0.3);
+            background: #000; cursor: pointer; transition: 0.4s;
+            overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;
         }
-
-        .thumb-link::before {
-            content: "FILE_" attr(data-index);
-            position: absolute; top: 5px; left: 5px; font-size: 10px; color: var(--gold); z-index: 5;
-        }
-
-        .thumb-link:hover { border-color: var(--gold); transform: scale(1.05); z-index: 10; }
+        .thumb-link::before { content: "FILE_" attr(data-index); position: absolute; top: 5px; left: 5px; font-size: 10px; color: var(--gold); z-index: 5; }
+        .thumb-link:hover { border-color: var(--gold); transform: scale(1.03); }
         .thumb-link.active { border: 2px solid var(--gold); box-shadow: 0 0 20px var(--gold-glow); }
-        .thumb-link.hot-seat-thumb { border-color: var(--alert-red); }
-        .thumb-link img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; filter: grayscale(100%); transition: 0.3s; }
-        .thumb-link.active img, .thumb-link:hover img { opacity: 1; filter: grayscale(0%); }
+        .thumb-link img { width: 100%; height: 100%; object-fit: cover; opacity: 0.4; filter: grayscale(100%); transition: 0.3s; }
+        .thumb-link.active img { opacity: 1; filter: grayscale(0%); }
 
-        /* Remarks/Hot Seat Overlay */
+        /* Stage Area */
+        #stage {
+            position: relative; background: var(--panel-bg); border: 1px solid var(--gold);
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+        }
+        .slide {
+            position: absolute; inset: 0; opacity: 0;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.8s ease-in-out; padding: 40px; pointer-events: none;
+            transform: scale(1.05);
+        }
+        .slide.active { opacity: 1; pointer-events: auto; transform: scale(1); }
+        .slide img, .slide video { max-width: 95%; max-height: 85vh; border: 2px solid var(--gold); box-shadow: 0 0 50px #000; }
+
+        /* Hot Seat Overlay */
         .hot-seat-overlay {
             position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
-            background: var(--alert-red); color: white;
-            padding: 15px 40px; font-family: var(--font-header);
-            border: 4px solid white; box-shadow: 0 0 50px var(--alert-red);
-            text-transform: uppercase; font-size: 2.5rem; letter-spacing: 5px;
-            animation: glitch-pulse 0.3s infinite;
-            z-index: 500; display: none; text-align: center;
+            background: var(--alert-red); color: white; padding: 15px 40px;
+            font-family: var(--font-header); border: 4px solid white;
+            font-size: 2.2rem; letter-spacing: 3px; z-index: 500;
+            display: none; text-align: center; animation: glitch-pulse 0.3s infinite;
         }
 
         @keyframes glitch-pulse {
             0% { transform: translateX(-50%) skewX(0deg); }
-            20% { transform: translateX(-52%) skewX(-5deg); }
-            40% { transform: translateX(-48%) skewX(5deg); }
-            60% { transform: translateX(-50%) skewX(0deg); }
+            50% { transform: translateX(-51%) skewX(-3deg); }
+            100% { transform: translateX(-49%) skewX(3deg); }
         }
 
-        /* Stage Area */
-        #stage {
-            position: relative;
-            background: var(--panel-bg); border: 1px solid var(--gold);
-            display: flex; align-items: center; justify-content: center; overflow: hidden;
-            box-shadow: 0 0 40px rgba(0,0,0,1);
-        }
-
-        #stage::before {
-            content: "SEC-9 ARCHIVE // LIVE FEED";
-            position: absolute; top: 10px; left: 10px; font-size: 12px; color: var(--gold); opacity: 0.5;
-        }
-
-        .slide {
-            position: absolute; inset: 0; opacity: 0;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.8s ease-in-out; padding: 40px; pointer-events: none;
-            transform: scale(1.1);
-        }
-
-        .slide.active { opacity: 1; pointer-events: auto; transform: scale(1); }
-
-        .slide img, .slide video {
-            max-width: 95%; max-height: 85vh;
-            border: 2px solid var(--gold); 
-            box-shadow: 0 0 50px rgba(0,0,0,1);
-            background: black;
-        }
-
-        /* Subtitles / HUD Data */
-        #lyric-container {
-            position: fixed; bottom: 50px; right: 50px;
-            text-align: right; z-index: 100; max-width: 60%;
-        }
-
+        /* Lyrics HUD */
+        #lyric-container { position: fixed; bottom: 50px; right: 50px; text-align: right; z-index: 100; }
         .subtitle-text {
-            font-family: var(--font-header);
-            font-size: 3rem; font-weight: 700;
-            text-transform: uppercase; color: var(--gold);
-            text-shadow: 4px 4px 0px #000; opacity: 0; transform: translateY(20px); transition: 0.4s;
+            font-family: var(--font-header); font-size: 3rem; color: var(--gold);
+            text-shadow: 4px 4px 0px #000; opacity: 0; transition: 0.4s;
         }
-
-        .subtitle-text.active { opacity: 1; transform: translateY(0); }
+        .subtitle-text.active { opacity: 1; }
 
         /* Authorization Gate */
-        #gate { 
-            position: fixed; inset: 0; background: #000;
-            z-index: 1000; display: flex; align-items: center; justify-content: center; 
-        }
-        .gate-card { 
-            text-align: center; padding: 60px; border: 2px solid var(--gold); 
-            background: rgba(0, 15, 30, 0.95); backdrop-filter: blur(15px);
-            box-shadow: 0 0 100px rgba(212, 175, 55, 0.3);
-        }
+        #gate { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
+        .gate-card { text-align: center; padding: 60px; border: 2px solid var(--gold); background: rgba(0, 15, 30, 0.95); }
         .start-btn { 
             background: var(--gold); padding: 18px 50px; border: none; cursor: pointer; 
-            font-family: var(--font-header); font-weight: bold; font-size: 1.8rem;
-            margin-top: 40px; letter-spacing: 8px; text-transform: uppercase;
-            transition: 0.3s; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+            font-family: var(--font-header); font-size: 1.8rem; margin-top: 40px;
+            letter-spacing: 8px; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
         }
-        .start-btn:hover { background: white; color: black; box-shadow: 0 0 30px white; }
 
-        .final-box h1 { 
-            font-family: var(--font-header); font-size: 5rem; color: var(--gold); 
-            text-shadow: 0 0 30px var(--gold); margin: 10px 0; letter-spacing: 5px;
-        }
+        .final-box h1 { font-family: var(--font-header); font-size: 4.5rem; color: var(--gold); text-shadow: 0 0 30px var(--gold); }
     </style>
 </head>
 <body>
+
+<div id="nav-icon" onclick="jumpTo(0)">
+    <img src="10.JPEG" alt="HQ_ICON">
+</div>
 
 <div id="particles-js"></div>
 <div class="vignette"></div>
@@ -201,11 +167,17 @@
 </div>
 
 <div id="main-layout">
-    <div id="sidebar">
-        </div>
+    <div id="sidebar"></div>
 
     <div id="stage">
         <div id="hotSeatTag" class="hot-seat-overlay">⚠️ BEST JUDGE EVER (HOT SEAT✌️😂) ⚠️</div>
+
+        <div id="recordPanel">
+            <h3>PERSONNEL_RECORD: NYX</h3>
+            <p>DESIGNATION: LEAD OFFICER</p>
+            <p>ASSIGNMENT: SECTION IX ARCHIVE</p>
+            <p>STATUS: TRANSFER PENDING...</p>
+        </div>
 
         <div class="slide active"><img src="1.JPG"></div>
         <div class="slide"><video src="2.MOV" muted></video></div>
@@ -227,12 +199,10 @@
         <div class="slide"><img src="18.JPG"></div>
         <div class="slide"><img src="19.JPG"></div>
         <div class="slide"><img src="20.JPG"></div>
-        
         <div class="slide"><img src="21.JPEG"></div> 
         <div class="slide"><img src="22.JPEG"></div>
         <div class="slide"><img src="23.JPEG"></div> 
         <div class="slide"><img src="24.JPEG"></div> 
-        
         <div class="slide"><img src="25.JPG"></div>
         <div class="slide"><img src="26.JPG"></div>
         <div class="slide"><img src="27.JPG"></div>
@@ -271,18 +241,18 @@
     const music = document.getElementById('bgMusic');
     const subtitle = document.getElementById('subtitle');
     const hotSeatTag = document.getElementById('hotSeatTag');
+    const recordPanel = document.getElementById('recordPanel');
+    const navIcon = document.getElementById('nav-icon');
     let currentIdx = 0;
     let timer;
 
     const hotSeatIndices = [20, 22, 23];
 
-    // Build sidebar with metadata
+    // Sidebar Initialization
     slides.forEach((s, idx) => {
         const thumb = document.createElement('div');
         thumb.className = 'thumb-link';
         thumb.setAttribute('data-index', (idx + 1).toString().padStart(3, '0'));
-        if(hotSeatIndices.includes(idx)) thumb.classList.add('hot-seat-thumb');
-        
         thumb.onclick = () => jumpTo(idx);
         
         const img = s.querySelector('img');
@@ -290,7 +260,7 @@
             const clone = img.cloneNode();
             thumb.appendChild(clone);
         } else {
-            thumb.innerHTML = `<span style="font-size:12px; color:var(--gold);">VIDEO_STREAM</span>`;
+            thumb.innerHTML = `<span style="font-size:10px; color:var(--gold);">MEDIA_FILE</span>`;
         }
         sidebar.appendChild(thumb);
     });
@@ -298,7 +268,7 @@
     const thumbs = document.querySelectorAll('.thumb-link');
 
     const lyrics = [
-        { time: 0, text: "SYSTEM SCANNING: TARGET ACQUIRED" },
+        { time: 0, text: "SYSTEM SCANNING... TARGET ACQUIRED" },
         { time: 5, text: "IDENTITY VERIFIED: MA'AM NYX" },
         { time: 14, text: "A week ago you said to us..." },
         { time: 23, text: "If we're lost, don't call us..." },
@@ -308,24 +278,19 @@
         { time: 198, text: "SAFE TRAVELS, MA'AM GANDA 🫡" }
     ];
 
-    particlesJS("particles-js", {
-        "particles": { "number": { "value": 80 }, "color": { "value": "#d4af37" }, "shape": { "type": "edge" }, "move": { "speed": 1.2 } }
-    });
+    particlesJS("particles-js", { "particles": { "number": { "value": 70 }, "color": { "value": "#d4af37" }, "move": { "speed": 1 } } });
 
     function ignite() {
         document.getElementById('gate').style.display = 'none';
+        navIcon.style.display = 'block';
         music.play();
         runEngine();
         
         music.ontimeupdate = () => {
-            const current = music.currentTime;
-            const active = lyrics.reduce((prev, curr) => (curr.time <= current) ? curr : prev, null);
+            const active = lyrics.reduce((prev, curr) => (curr.time <= music.currentTime) ? curr : prev, null);
             if (active && subtitle.innerText !== active.text) {
                 subtitle.classList.remove('active');
-                setTimeout(() => {
-                    subtitle.innerText = active.text;
-                    subtitle.classList.add('active');
-                }, 50);
+                setTimeout(() => { subtitle.innerText = active.text; subtitle.classList.add('active'); }, 50);
             }
         };
     }
@@ -344,11 +309,12 @@
             if(v) v.pause();
         });
 
-        if (hotSeatIndices.includes(currentIdx)) {
-            hotSeatTag.style.display = 'block';
-        } else {
-            hotSeatTag.style.display = 'none';
-        }
+        // Hot Seat Logic
+        hotSeatTag.style.display = hotSeatIndices.includes(currentIdx) ? 'block' : 'none';
+
+        // Personnel Record Logic (Slide 1 only)
+        if(currentIdx === 0) recordPanel.classList.add('active');
+        else recordPanel.classList.remove('active');
 
         slides[currentIdx].classList.add('active');
         thumbs[currentIdx].classList.add('active');
