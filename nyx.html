@@ -7,118 +7,127 @@
     <style>
         :root { 
             --gold: #d4af37; 
-            --gold-glow: rgba(212, 175, 55, 0.5);
-            --bg: #030303; 
+            --gold-glow: rgba(212, 175, 55, 0.6);
+            --bg: #050505; 
         }
 
         body, html { 
             margin: 0; padding: 0; 
             background: var(--bg); 
             color: white; 
-            font-family: 'Optima', 'Didot', 'serif'; 
+            font-family: 'Optima', 'Segoe UI', serif; 
             overflow: hidden; 
             height: 100%; 
         }
 
-        /* Ambient Layering */
-        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.5; pointer-events: none; }
-        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.9) 100%); z-index: 10; pointer-events: none; }
-        #shutter { position: fixed; inset: 0; background: white; z-index: 999; opacity: 0; pointer-events: none; }
+        /* Cinematic Overlays */
+        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.4; pointer-events: none; }
+        .vignette { 
+            position: fixed; inset: 0; 
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%); 
+            z-index: 10; pointer-events: none; 
+        }
+        
+        /* Shutter/Flash Effect */
+        #shutter { 
+            position: fixed; inset: 0; background: white; 
+            z-index: 999; opacity: 0; pointer-events: none; 
+        }
 
-        /* Dynamic Lyric System */
+        /* Enhanced Lyric Container */
         #lyric-container {
             position: fixed;
-            bottom: 8%;
+            bottom: 10%;
             width: 100%;
             text-align: center;
             z-index: 100;
+            perspective: 1000px;
         }
 
         .subtitle-text {
             font-size: 2.4rem;
-            font-weight: 200;
             font-style: italic;
             letter-spacing: 4px;
-            background: linear-gradient(to bottom, #ffffff 0%, var(--gold) 100%);
+            background: linear-gradient(to bottom, #fff 20%, var(--gold) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
             opacity: 0;
-            transform: translateY(30px) scale(0.95);
-            transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1);
-            filter: blur(8px);
+            transform: scale(0.95) translateY(30px);
+            transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         .subtitle-text.active {
             opacity: 1;
-            transform: translateY(0) scale(1);
-            filter: blur(0px);
+            transform: scale(1) translateY(0);
+            animation: pulseGlow 4s infinite ease-in-out;
         }
 
-        /* Cinematic Intro */
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.2)); }
+            50% { filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.6)); }
+        }
+
+        /* Intro Screen */
         #gate { 
             position: fixed; inset: 0; 
-            background: black;
-            z-index: 1000; display: flex; 
-            align-items: center; justify-content: center; 
-            transition: 3s cubic-bezier(0.7, 0, 0.3, 1); 
+            background: #000; z-index: 1000; 
+            display: flex; align-items: center; justify-content: center; 
+            transition: 2s ease-in-out; 
         }
 
         .gate-card { 
-            text-align: center; padding: 100px;
-            border: 1px solid rgba(212, 175, 55, 0.15);
-            background: rgba(255,255,255,0.01);
-            backdrop-filter: blur(30px);
+            text-align: center; padding: 60px;
+            border-top: 1px solid var(--gold);
+            border-bottom: 1px solid var(--gold);
+            background: rgba(5,5,5,0.9);
+            backdrop-filter: blur(10px);
         }
 
         .start-btn { 
-            margin-top: 50px; padding: 22px 90px; 
+            margin-top: 40px; padding: 15px 60px; 
             background: transparent; border: 1px solid var(--gold); 
             color: var(--gold); font-size: 0.9rem; cursor: pointer; 
-            letter-spacing: 10px; transition: 0.8s; text-transform: uppercase;
+            letter-spacing: 10px; transition: 0.5s; text-transform: uppercase;
         }
 
-        .start-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 60px var(--gold-glow); }
+        .start-btn:hover { 
+            background: var(--gold); color: black; 
+            box-shadow: 0 0 30px var(--gold-glow); 
+        }
 
-        /* Media Engine */
-        #stage { position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; perspective: 1000px; }
+        /* Slideshow Engine */
+        #stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+        
         .slide { 
             position: absolute; inset: 0; opacity: 0; 
             display: flex; align-items: center; justify-content: center; 
-            transition: opacity 2.5s ease-in-out, transform 2.5s ease-in-out; 
-            visibility: hidden; 
+            transition: opacity 2.5s ease; visibility: hidden; 
         }
+
         .slide.active { opacity: 1; visibility: visible; }
 
         .slide img, .slide video { 
-            max-width: 80%; max-height: 80vh; 
+            max-width: 95%; max-height: 90vh; 
             object-fit: contain; 
-            filter: drop-shadow(0 30px 60px rgba(0,0,0,1));
-            border-radius: 2px;
+            box-shadow: 0 0 100px rgba(0,0,0,1);
+            transform: scale(1.1);
         }
 
-        /* Parallax & Ken Burns Upgrade */
+        /* Ken Burns Effect */
         .slide.active img {
-            animation: cinematicFloat 7s ease-in-out forwards;
+            animation: kenBurns 7s ease-out forwards;
         }
 
-        @keyframes cinematicFloat {
-            0% { transform: scale(1.1) translateY(10px) rotate(-1deg); }
-            100% { transform: scale(1.0) translateY(-10px) rotate(1deg); }
+        @keyframes kenBurns {
+            0% { transform: scale(1.1) translateY(0); }
+            100% { transform: scale(1) translateY(-10px); }
         }
 
-        /* Dedication Slide UI */
         .final-box h1 { 
-            font-size: 5.5rem; letter-spacing: 18px; text-transform: uppercase; font-weight: 100;
+            font-size: 4.5rem; letter-spacing: 15px; 
             background: linear-gradient(to right, #fff, var(--gold), #fff);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin: 0;
-        }
-
-        .final-box p { animation: fadeInUp 3s ease forwards; }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -134,10 +143,10 @@
 
 <div id="gate">
     <div class="gate-card">
-        <h1 style="letter-spacing: 20px; color: var(--gold); margin-bottom: 5px; font-weight: 100;">WALKING IN THE WIND</h1>
-        <p style="opacity: 0.3; letter-spacing: 8px; font-size: 0.8rem; margin-bottom: 30px;">THE HOMECOMING JOURNEY</p>
-        <h2 style="font-size: 3.5rem; color: white; margin: 20px 0; font-weight: 200; font-style: italic;">Miss Nyx Postrano</h2>
-        <button class="start-btn" onclick="ignite()">Begin Experience</button>
+        <h1 style="letter-spacing: 12px; color: var(--gold);">WALKING IN THE WIND</h1>
+        <p style="opacity: 0.5; letter-spacing: 5px; font-style: italic;">A TRIBUTE TO EXCELLENCE & SERVICE</p>
+        <h2 style="font-size: 2.8rem; color: #fff; margin: 15px 0; font-weight: 300;">Miss Nyx Postrano</h2>
+        <button class="start-btn" onclick="ignite()">Enter Journey</button>
     </div>
 </div>
 
@@ -150,48 +159,17 @@
     <div class="slide"><video src="4.MOV" muted></video></div>
     <div class="slide"><img src="5.JPEG"></div>
     <div class="slide"><img src="6.JPEG"></div>
-    <div class="slide"><img src="7.JPEG"></div>
-    <div class="slide"><img src="8.JPEG"></div>
-    <div class="slide"><img src="9.JPEG"></div>
-    <div class="slide"><img src="10.JPEG"></div>
-    <div class="slide"><img src="11.JPEG"></div>
-    <div class="slide"><img src="12.JPEG"></div>
-    <div class="slide"><img src="13.JPEG"></div>
-    <div class="slide"><img src="14.JPEG"></div>
-    <div class="slide"><img src="15.JPEG"></div>
-    <div class="slide"><img src="16.JPEG"></div>
-    <div class="slide"><img src="17.JPEG"></div>
-    <div class="slide"><img src="18.JPG"></div>
-    <div class="slide"><img src="19.JPG"></div>
-    <div class="slide"><img src="20.JPG"></div>
-    <div class="slide"><img src="21.JPEG"></div>
-    <div class="slide"><img src="22.JPEG"></div>
-    <div class="slide"><img src="23.JPEG"></div>
-    <div class="slide"><img src="24.JPEG"></div>
-    <div class="slide"><img src="25.JPG"></div>
-    <div class="slide"><img src="26.JPG"></div>
-    <div class="slide"><img src="27.JPG"></div>
-    <div class="slide"><img src="28.JPG"></div>
-    <div class="slide"><img src="29.JPG"></div>
-    <div class="slide"><img src="30.JPG"></div>
-    <div class="slide"><img src="31.JPEG"></div>
-    <div class="slide"><img src="31.JPG"></div>
-    <div class="slide"><img src="32.JPEG"></div>
-    <div class="slide"><img src="33(1).JPEG"></div>
-    <div class="slide"><img src="33.JPEG"></div>
-    <div class="slide"><img src="111.jpg"></div>
-    <div class="slide"><img src="112.jpg"></div>
     <div class="slide"><img src="113.jpg"></div>
 
     <div class="slide">
         <div class="final-box" style="text-align: center;">
-            <p style="letter-spacing: 15px; margin-bottom: 30px; opacity: 0.6; font-size: 0.9rem;">DESTINATION REACHED</p>
+            <p style="letter-spacing: 10px; opacity: 0.6;">NEW CHAPTERS AWAIT</p>
             <h1>NYX POSTRANO</h1>
-            <p style="opacity: 0.9; margin-top: 40px; font-size: 1.4rem; letter-spacing: 4px; font-style: italic;">
-                She is transitioning to her home assignment from this unit.
+            <p style="opacity: 0.8; font-size: 1.2rem; letter-spacing: 2px; font-style: italic;">
+                "You'll find me in the region of the stars."
             </p>
-            <div style="width: 80px; height: 1px; background: var(--gold); margin: 40px auto; opacity: 0.5;"></div>
-            <p style="opacity: 0.4; letter-spacing: 3px; font-size: 0.9rem;">Thank you for the memories and the service.</p>
+            <div style="width: 80px; height: 1px; background: var(--gold); margin: 40px auto;"></div>
+            <p style="opacity: 0.4; letter-spacing: 4px;">ZAMBOANGA CITY, PHILIPPINES | 2026</p>
         </div>
     </div>
 </div>
@@ -204,49 +182,55 @@
     const subtitle = document.getElementById('subtitle');
     let currentIdx = 0;
 
-    // Precise Lyric Timing (Seconds)
+    // Precisely timed for "Walking in the Wind" phrasing
     const lyrics = [
-        { time: 6, text: "A week ago you said to me..." },
-        { time: 10, text: "Do you believe I'll ever be back?" },
-        { time: 15, text: "And I told you, I was sure of it." },
-        { time: 28, text: "We carry your stories with us..." },
-        { time: 42, text: "You'll find me in the region of the summer stars." },
-        { time: 51, text: "Walking in the wind..." },
-        { time: 68, text: "Your dedication leaves a lasting mark." },
-        { time: 105, text: "A transition toward new horizons." },
-        { time: 155, text: "Your hometown mission awaits." },
-        { time: 198, text: "Safe travels, Miss Nyx Postrano." }
+        { time: 1, text: "A Journey of Service & Homecoming" },
+        { time: 6, text: "Dedicated to Miss Nyx Postrano" },
+        { time: 15, text: "A week ago you said to me..." },
+        { time: 18, text: "Do you believe I'll never be too far?" },
+        { time: 23, text: "If I'm lost, just look for me" },
+        { time: 26, text: "You'll find me in the region of the stars" },
+        { time: 31, text: "I told you never to take a look back" },
+        { time: 35, text: "We'll be together again, I hope that" },
+        { time: 46, text: "Walking in the wind..." },
+        { time: 50, text: "Smiling at the sunset" },
+        { time: 54, text: "I'll be greatly missed" },
+        { time: 58, text: "But I know you'll never forget" },
+        { time: 105, text: "The mark you left will never fade." },
+        { time: 155, text: "Your hometown assignment awaits." },
+        { time: 198, text: "Welcome home, Miss Nyx Postrano." }
     ];
 
     particlesJS("particles-js", {
         "particles": {
-            "number": { "value": 100 },
+            "number": { "value": 60 },
             "color": { "value": "#d4af37" },
-            "opacity": { "value": 0.4 },
-            "size": { "value": 1 },
-            "move": { "enable": true, "speed": 0.4, "direction": "top-right", "random": true }
+            "size": { "value": 1.5 },
+            "move": { "enable": true, "speed": 0.8, "direction": "top", "random": true }
         }
     });
 
     function ignite() {
         document.getElementById('gate').style.opacity = '0';
-        document.getElementById('gate').style.transform = 'scale(1.2)';
-        setTimeout(() => document.getElementById('gate').style.display = 'none', 3000);
-        
+        document.getElementById('gate').style.pointerEvents = 'none';
         music.play();
         runEngine();
         
         music.ontimeupdate = () => {
             const current = music.currentTime;
-            const active = lyrics.reverse().find(l => current >= l.time);
-            lyrics.reverse(); // Reset order for next update
+            const active = lyrics.reduce((prev, curr) => (current >= curr.time ? curr : prev), null);
             
-            if (active && subtitle.innerText !== active.text) {
+            // Auto-clear logic: hide if current time is 4s past the lyric start
+            const shouldHide = active && (current > active.time + 4.5);
+
+            if (active && subtitle.innerText !== active.text && !shouldHide) {
                 subtitle.classList.remove('active');
                 setTimeout(() => {
                     subtitle.innerText = active.text;
                     subtitle.classList.add('active');
-                }, 500);
+                }, 400);
+            } else if (shouldHide) {
+                subtitle.classList.remove('active');
             }
         };
     }
@@ -261,23 +245,22 @@
         const slide = slides[currentIdx];
         slide.classList.add('active');
         
-        // Shutter pulse
-        shutter.style.opacity = '0.5';
+        // Trigger Camera Flash effect
+        shutter.style.opacity = '0.6';
         setTimeout(() => { shutter.style.opacity = '0'; }, 100);
 
         const video = slide.querySelector('video');
         if (video) {
-            // Audio Ducking Logic
-            music.animate([{volume: music.volume}, {volume: 0.1}], {duration: 1000, fill: 'forwards'});
+            music.volume = 0.2; // Dim music for video sound
             video.currentTime = 0;
             video.play();
             video.onended = () => {
-                music.animate([{volume: 0.1}, {volume: 1.0}], {duration: 1000, fill: 'forwards'});
+                music.volume = 1.0;
                 advance();
             };
         } else {
-            // Standard photo dwell time (6 seconds for cinematic effect)
-            setTimeout(advance, 6000);
+            // Adjust slide speed here (4800ms = 4.8 seconds)
+            setTimeout(advance, 4800);
         }
     }
 
