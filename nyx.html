@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tribute to Miss Nyx Postrano</title>
+    <title>Tribute | Miss Nyx Postrano</title>
     <style>
         :root { 
             --gold: #d4af37; 
-            --gold-glow: rgba(212, 175, 55, 0.5);
+            --gold-glow: rgba(212, 175, 55, 0.4);
             --bg: #050505; 
         }
 
@@ -20,106 +20,105 @@
             height: 100%; 
         }
 
-        /* Floating Atmosphere */
-        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.35; }
+        /* Particles & Atmosphere */
+        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.3; }
         
-        /* Camera Shutter Flash */
+        .vignette { 
+            position: fixed; inset: 0; 
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.95) 100%); 
+            z-index: 10; pointer-events: none; 
+        }
+
+        /* Cinematic Shutter Flash */
         #shutter { 
             position: fixed; inset: 0; 
             background: white; z-index: 999; 
             opacity: 0; pointer-events: none; 
         }
 
-        .vignette { 
-            position: fixed; inset: 0; 
-            background: radial-gradient(circle, transparent 10%, rgba(0,0,0,0.95) 100%); 
-            z-index: 10; pointer-events: none; 
+        /* Lyrics Layer */
+        #lyric-container {
+            position: fixed;
+            bottom: 12%;
+            width: 100%;
+            text-align: center;
+            z-index: 100;
+            pointer-events: none;
         }
 
-        /* Premium Intro Gate */
+        .lyric-text {
+            font-size: 1.8rem;
+            font-style: italic;
+            letter-spacing: 2px;
+            color: white;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+            opacity: 0;
+            filter: blur(10px);
+            transition: all 0.8s ease;
+        }
+
+        .lyric-text.active {
+            opacity: 1;
+            filter: blur(0px);
+            transform: translateY(-10px);
+        }
+
+        /* Intro Screen */
         #gate { 
             position: fixed; inset: 0; 
             background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
             z-index: 1000; display: flex; 
             align-items: center; justify-content: center; 
-            transition: 2.5s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: 2s cubic-bezier(0.4, 0, 0.2, 1); 
         }
 
         .gate-card { 
-            text-align: center; padding: 70px;
-            border: 1px solid rgba(212, 175, 55, 0.15);
+            text-align: center; padding: 60px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
             background: rgba(255,255,255,0.02);
             backdrop-filter: blur(15px);
-            box-shadow: 0 0 100px rgba(0,0,0,0.5);
         }
 
         .start-btn { 
-            margin-top: 40px; padding: 18px 65px; 
+            margin-top: 30px; padding: 18px 60px; 
             background: transparent; border: 1px solid var(--gold); 
             color: var(--gold); font-size: 1rem; cursor: pointer; 
-            letter-spacing: 7px; transition: 0.5s; text-transform: uppercase;
+            letter-spacing: 6px; transition: 0.5s; text-transform: uppercase;
         }
 
-        .start-btn:hover { 
-            background: var(--gold); color: black; 
-            box-shadow: 0 0 50px var(--gold-glow); 
-        }
+        .start-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 40px var(--gold-glow); }
 
-        /* Slide Engine */
-        #stage { 
-            position: relative; width: 100vw; height: 100vh; 
-            display: flex; align-items: center; justify-content: center; 
-        }
+        /* Stage Engine */
+        #stage { position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
 
         .slide { 
             position: absolute; inset: 0; opacity: 0; 
             display: flex; align-items: center; justify-content: center; 
-            transition: opacity 1.8s ease-in-out; visibility: hidden; 
+            transition: opacity 1.5s ease-in-out; visibility: hidden; 
         }
 
         .slide.active { opacity: 1; visibility: visible; }
 
-        /* Smooth Cinematic Motion */
         .slide img { 
-            max-width: 80%; max-height: 80vh; 
+            max-width: 85%; max-height: 80vh; 
             object-fit: contain; 
-            filter: drop-shadow(0 10px 50px rgba(0,0,0,1));
+            filter: drop-shadow(0 0 50px black);
             transform: scale(1.1);
         }
 
-        .slide.active img { 
-            animation: kenburns 10s linear forwards; 
-        }
+        .slide.active img { animation: kenburns 12s linear forwards; }
 
         @keyframes kenburns {
-            from { transform: scale(1.12) translateY(10px); }
-            to { transform: scale(1.0) translateY(-10px); }
+            from { transform: scale(1.1) rotate(0.01deg); }
+            to { transform: scale(1.0) translateY(-15px) rotate(0.01deg); }
         }
 
-        video { 
-            max-width: 85%; max-height: 85vh; 
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            box-shadow: 0 0 80px rgba(0,0,0,1);
-        }
+        video { max-width: 85%; max-height: 80vh; border: 1px solid rgba(212, 175, 55, 0.2); }
 
-        /* Final Dedicated Message */
         .final-box h1 { 
-            font-size: clamp(2.5rem, 6vw, 5.5rem); 
-            letter-spacing: 12px; 
-            text-transform: uppercase;
+            font-size: 4rem; letter-spacing: 15px; text-transform: uppercase;
             background: linear-gradient(to bottom, #f1d592, #d4af37);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0;
-            filter: drop-shadow(0 0 20px var(--gold-glow));
-        }
-        
-        .final-box p { 
-            font-family: 'Segoe UI', sans-serif; 
-            letter-spacing: 4px; 
-            opacity: 0.5; 
-            margin-top: 15px;
-            text-transform: uppercase;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
@@ -127,14 +126,18 @@
 
 <div id="particles-js"></div>
 <div id="shutter"></div>
-<audio id="bgMusic" src="Walking in the Wind - One Direction (Lyrics) - Little Peach (128k).mp3" loop></audio>
+<audio id="bgMusic" src="Walking in the Wind - One Direction (Lyrics) - Little Peach (128k).mp3"></audio>
+
+<div id="lyric-container">
+    <div id="lyric-text" class="lyric-text"></div>
+</div>
 
 <div id="gate">
     <div class="gate-card">
-        <h1 style="letter-spacing: 14px; font-weight: 100; color: var(--gold); margin-bottom: 5px;">WALKING IN THE WIND</h1>
-        <p style="opacity: 0.6; font-size: 1.1rem; letter-spacing: 5px; color: white;">A TRIBUTE TO</p>
-        <h2 style="font-size: 2.8rem; color: var(--gold); margin: 15px 0; letter-spacing: 3px;">MISS NYX POSTRANO</h2>
-        <button class="start-btn" onclick="ignite()">Begin the Journey</button>
+        <h1 style="letter-spacing: 10px; color: var(--gold); margin-bottom: 5px;">WALKING IN THE WIND</h1>
+        <p style="opacity: 0.5; letter-spacing: 4px;">A TRIBUTE TO</p>
+        <h2 style="font-size: 2.5rem; color: var(--gold); margin: 10px 0;">MISS NYX POSTRANO</h2>
+        <button class="start-btn" onclick="ignite()">Begin Journey</button>
     </div>
 </div>
 
@@ -182,9 +185,9 @@
 
     <div class="slide">
         <div class="final-box" style="text-align: center;">
-            <p>Welcome Home</p>
+            <p style="letter-spacing: 10px;">WELCOME HOME</p>
             <h1>MISS NYX POSTRANO</h1>
-            <p>Your new chapter begins now.<br>Safe travels in your hometown assignment.</p>
+            <p>Your new chapter begins now.</p>
         </div>
     </div>
 </div>
@@ -194,60 +197,78 @@
     const slides = document.querySelectorAll('.slide');
     const music = document.getElementById('bgMusic');
     const shutter = document.getElementById('shutter');
+    const lyricEl = document.getElementById('lyric-text');
     let currentIdx = 0;
 
-    // Golden Floating Dust Effect
+    // --- LYRIC SYNC DATA ---
+    // Adjust 'time' (seconds) to match the song's vocals exactly
+    const lyrics = [
+        { time: 2, text: "A tribute to our beloved officer" },
+        { time: 6, text: "Miss Nyx Postrano" },
+        { time: 12, text: "You'll find your way home..." },
+        { time: 16, text: "Walking in the wind" },
+        { time: 20, text: "We carry your stories with us" },
+        { time: 25, text: "The journey is just beginning" },
+        { time: 30, text: "A new chapter unfolds" }
+        // Add more lyrics here...
+    ];
+
     particlesJS("particles-js", {
         "particles": {
-            "number": { "value": 90 },
+            "number": { "value": 60 },
             "color": { "value": "#d4af37" },
-            "opacity": { "value": 0.3 },
-            "size": { "value": 1.5 },
-            "move": { "enable": true, "speed": 0.6, "direction": "top" }
+            "opacity": { "value": 0.2 },
+            "size": { "value": 2 },
+            "move": { "enable": true, "speed": 1, "direction": "top" }
         }
     });
 
     function ignite() {
         document.getElementById('gate').style.opacity = '0';
-        document.getElementById('gate').style.transform = 'scale(1.15)';
-        setTimeout(() => document.getElementById('gate').style.display = 'none', 2500);
+        document.getElementById('gate').style.transform = 'scale(1.1)';
+        setTimeout(() => document.getElementById('gate').style.display = 'none', 2000);
         
-        music.volume = 0;
         music.play();
-        // Fade in music smoothly
-        let vol = 0;
-        let fade = setInterval(() => {
-            if (vol < 1) { vol += 0.05; music.volume = vol; }
-            else clearInterval(fade);
-        }, 150);
-
         runEngine();
-    }
-
-    function triggerFlash() {
-        shutter.style.opacity = '0.4';
-        setTimeout(() => { shutter.style.opacity = '0'; }, 200);
+        
+        // Lyric Sync Monitor
+        music.ontimeupdate = () => {
+            const current = music.currentTime;
+            const active = lyrics.find((l, i) => 
+                current >= l.time && (!lyrics[i+1] || current < lyrics[i+1].time)
+            );
+            
+            if (active && lyricEl.innerText !== active.text) {
+                lyricEl.classList.remove('active');
+                setTimeout(() => {
+                    lyricEl.innerText = active.text;
+                    lyricEl.classList.add('active');
+                }, 400);
+            }
+        };
     }
 
     function runEngine() {
         slides.forEach(s => s.classList.remove('active'));
         const slide = slides[currentIdx];
         slide.classList.add('active');
-        triggerFlash();
+        
+        // Shutter Flash
+        shutter.style.opacity = '0.4';
+        setTimeout(() => { shutter.style.opacity = '0'; }, 200);
 
         const video = slide.querySelector('video');
         if (video) {
-            // Lower music for video
-            music.animate([{volume: 1}, {volume: 0.1}], {duration: 1200, fill: 'forwards'});
+            music.animate([{volume: 1}, {volume: 0.15}], {duration: 1000, fill: 'forwards'});
             video.currentTime = 0;
             video.play();
             video.onended = () => {
-                music.animate([{volume: 0.1}, {volume: 1}], {duration: 1200, fill: 'forwards'});
+                music.animate([{volume: 0.15}, {volume: 1}], {duration: 1000, fill: 'forwards'});
                 advance();
             };
         } else {
-            // Each photo stays for 6 seconds
-            setTimeout(advance, 6000);
+            // Photos stay for 6.5s to keep pace with a ballad
+            setTimeout(advance, 6500);
         }
     }
 
