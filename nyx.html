@@ -8,13 +8,11 @@
         body, html { margin: 0; padding: 0; background: var(--bg); color: white; font-family: 'Georgia', serif; overflow: hidden; height: 100%; }
 
         /* Lightning Effect */
-        .lightning { position: fixed; inset: 0; background: white; z-index: 99; opacity: 0; pointer-events: none; }
-        @keyframes flash { 0% { opacity: 0; } 5% { opacity: 0.8; } 10% { opacity: 0; } 15% { opacity: 0.5; } 20% { opacity: 0; } }
-        .flash-it { animation: flash 0.8s ease-out; }
+        #lightning { position: fixed; inset: 0; background: white; z-index: 99; opacity: 0; pointer-events: none; }
+        .flash { animation: flash-animation 0.5s ease-out; }
+        @keyframes flash-animation { 0% { opacity: 0; } 10% { opacity: 0.9; } 20% { opacity: 0; } 30% { opacity: 0.6; } 40% { opacity: 0; } }
 
-        /* Cinematic Visuals */
-        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 30%, black 150%); z-index: 10; pointer-events: none; }
-        
+        /* Visuals */
         #gate { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 2s; }
         .start-btn { padding: 20px 60px; background: var(--gold); border: none; font-size: 1.5rem; cursor: pointer; letter-spacing: 5px; font-weight: bold; }
 
@@ -22,25 +20,19 @@
         .slide { position: absolute; inset: 0; opacity: 0; display: flex; align-items: center; justify-content: center; transition: opacity 2s ease; visibility: hidden; }
         .slide.active { opacity: 1; visibility: visible; }
 
-        /* Auto-Fit Images */
-        .slide img { max-width: 95%; max-height: 90vh; object-fit: contain; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        .slide img { max-width: 95%; max-height: 90vh; object-fit: contain; }
         video { max-width: 95%; max-height: 90vh; outline: 1px solid var(--gold); }
-
-        .final-box { text-align: center; }
-        .final-box h1 { font-size: 4rem; color: var(--gold); }
     </style>
 </head>
 <body>
 
-<div class="lightning" id="storm"></div>
-<audio id="bgMusic" src="Walking in the Wind - One Direction (Lyrics) - Little Peach (128k).mp3" loop></audio>
+<div id="lightning"></div>
+<audio id="bgMusic" src="audio.mp3" loop></audio>
 
 <div id="gate">
     <h1 style="color:var(--gold); letter-spacing: 10px;">THE JOURNEY HOME</h1>
     <button class="start-btn" onclick="startAll()">PLAY FILM</button>
 </div>
-
-<div class="vignette"></div>
 
 <div id="stage">
     <div class="slide active"><img src="1.JPG"></div>
@@ -81,19 +73,12 @@
     <div class="slide"><img src="7.JPEG"></div>
     <div class="slide"><img src="8.JPEG"></div>
     <div class="slide"><img src="9.JPEG"></div>
-
-    <div class="slide">
-        <div class="final-box">
-            <h1>Welcome Home</h1>
-            <p>Congratulations on your new assignment.</p>
-        </div>
-    </div>
 </div>
 
 <script>
     const slides = document.querySelectorAll('.slide');
     const music = document.getElementById('bgMusic');
-    const storm = document.getElementById('storm');
+    const storm = document.getElementById('lightning');
     let i = 0;
 
     function startAll() {
@@ -101,13 +86,14 @@
         setTimeout(() => document.getElementById('gate').style.display = 'none', 1000);
         music.play();
         playSequence();
+        
         // Random Lightning Generator
         setInterval(() => {
-            if(Math.random() > 0.8) {
-                storm.classList.add('flash-it');
-                setTimeout(() => storm.classList.remove('flash-it'), 800);
+            if(Math.random() > 0.7) {
+                storm.classList.add('flash');
+                setTimeout(() => storm.classList.remove('flash'), 500);
             }
-        }, 5000);
+        }, 4000);
     }
 
     function playSequence() {
@@ -121,7 +107,7 @@
             video.play();
             video.onended = () => { music.volume = 1; next(); };
         } else {
-            setTimeout(next, 7000);
+            setTimeout(next, 6000);
         }
     }
 
