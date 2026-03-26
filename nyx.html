@@ -2,26 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>The Journey Home | Lightning Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Journey Home | Dynamic Tribute</title>
     <style>
-        :root { --gold: #d4af37; --bg: #050505; }
-        body, html { margin: 0; padding: 0; background: var(--bg); color: white; font-family: 'Georgia', serif; overflow: hidden; height: 100%; }
+        :root { --gold: #d4af37; --bg: #000; }
+        body, html { margin: 0; padding: 0; background: var(--bg); color: white; font-family: 'Segoe UI', serif; overflow: hidden; height: 100%; }
 
-        /* Lightning Effect */
-        #lightning { position: fixed; inset: 0; background: white; z-index: 99; opacity: 0; pointer-events: none; }
-        .flash { animation: flash-animation 0.5s ease-out; }
-        @keyframes flash-animation { 0% { opacity: 0; } 10% { opacity: 0.9; } 20% { opacity: 0; } 30% { opacity: 0.6; } 40% { opacity: 0; } }
+        /* Lightning Overlay */
+        #lightning { position: fixed; inset: 0; background: white; z-index: 99; opacity: 0; pointer-events: none; mix-blend-mode: overlay; }
 
-        /* Visuals */
-        #gate { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 2s; }
-        .start-btn { padding: 20px 60px; background: var(--gold); border: none; font-size: 1.5rem; cursor: pointer; letter-spacing: 5px; font-weight: bold; }
+        /* Cinematic Background Elements */
+        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 20%, black 150%); z-index: 10; pointer-events: none; }
+        .overlay-text { position: absolute; bottom: 8%; width: 100%; text-align: center; z-index: 20; text-shadow: 0 0 20px black; font-style: italic; font-size: 1.5rem; letter-spacing: 2px; opacity: 0.8; }
 
-        #stage { position: relative; width: 100vw; height: 100vh; }
-        .slide { position: absolute; inset: 0; opacity: 0; display: flex; align-items: center; justify-content: center; transition: opacity 2s ease; visibility: hidden; }
+        /* Gate/Start Screen */
+        #gate { position: fixed; inset: 0; background: radial-gradient(circle, #111, #000); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .gate-card { border: 1px solid var(--gold); padding: 60px; text-align: center; border-radius: 4px; box-shadow: 0 0 50px rgba(212, 175, 55, 0.1); }
+        .start-btn { margin-top: 30px; padding: 15px 50px; background: transparent; border: 1px solid var(--gold); color: var(--gold); font-size: 1.2rem; cursor: pointer; letter-spacing: 5px; transition: 0.4s; }
+        .start-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 30px var(--gold); }
+
+        /* Main Engine */
+        #stage { position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .slide { position: absolute; inset: 0; opacity: 0; display: flex; align-items: center; justify-content: center; transition: opacity 2s ease-in-out; visibility: hidden; }
         .slide.active { opacity: 1; visibility: visible; }
 
-        .slide img { max-width: 95%; max-height: 90vh; object-fit: contain; }
-        video { max-width: 95%; max-height: 90vh; outline: 1px solid var(--gold); }
+        /* Dynamic Image Sizing */
+        .slide img { max-width: 90%; max-height: 85vh; object-fit: contain; box-shadow: 0 0 100px rgba(0,0,0,1); transform: scale(1.1); transition: transform 8s linear; }
+        .slide.active img { transform: scale(1.0); }
+        
+        video { max-width: 90%; max-height: 85vh; box-shadow: 0 0 100px black; border: 1px solid rgba(212, 175, 55, 0.3); }
+
+        /* Finale Message */
+        .final-box h1 { font-size: 5rem; color: var(--gold); letter-spacing: 15px; margin-bottom: 20px; text-transform: uppercase; }
+        .final-box p { font-size: 1.8rem; line-height: 1.6; opacity: 0.7; }
     </style>
 </head>
 <body>
@@ -30,9 +43,14 @@
 <audio id="bgMusic" src="audio.mp3" loop></audio>
 
 <div id="gate">
-    <h1 style="color:var(--gold); letter-spacing: 10px;">THE JOURNEY HOME</h1>
-    <button class="start-btn" onclick="startAll()">PLAY FILM</button>
+    <div class="gate-card">
+        <h1 style="letter-spacing: 12px; margin: 0; font-weight: 100; color: var(--gold);">WALKING IN THE WIND</h1>
+        <p style="opacity: 0.5; margin-top: 10px;">A TRIBUTE TO OUR OFFICER</p>
+        <button class="start-btn" onclick="ignite()">START JOURNEY</button>
+    </div>
 </div>
+
+<div class="vignette"></div>
 
 <div id="stage">
     <div class="slide active"><img src="1.JPG"></div>
@@ -73,46 +91,73 @@
     <div class="slide"><img src="7.JPEG"></div>
     <div class="slide"><img src="8.JPEG"></div>
     <div class="slide"><img src="9.JPEG"></div>
+
+    <div class="slide">
+        <div class="final-box" style="text-align: center;">
+            <h1>Welcome Home</h1>
+            <p>Your journey is just beginning.<br>Best of luck in your hometown assignment.</p>
+        </div>
+    </div>
 </div>
 
 <script>
     const slides = document.querySelectorAll('.slide');
     const music = document.getElementById('bgMusic');
-    const storm = document.getElementById('lightning');
-    let i = 0;
+    const lightning = document.getElementById('lightning');
+    let currentIdx = 0;
 
-    function startAll() {
+    function ignite() {
         document.getElementById('gate').style.opacity = '0';
-        setTimeout(() => document.getElementById('gate').style.display = 'none', 1000);
-        music.play();
-        playSequence();
+        setTimeout(() => document.getElementById('gate').style.display = 'none', 2000);
         
-        // Random Lightning Generator
-        setInterval(() => {
-            if(Math.random() > 0.7) {
-                storm.classList.add('flash');
-                setTimeout(() => storm.classList.remove('flash'), 500);
-            }
-        }, 4000);
+        music.play();
+        startLightning();
+        runEngine();
     }
 
-    function playSequence() {
-        slides.forEach(s => s.classList.remove('active'));
-        const current = slides[i];
-        current.classList.add('active');
+    // Dynamic Lightning Logic
+    function startLightning() {
+        const trigger = () => {
+            const delay = Math.random() * 8000 + 2000; // Random delay between 2-10s
+            setTimeout(() => {
+                lightning.style.opacity = Math.random() * 0.4 + 0.3;
+                setTimeout(() => { lightning.style.opacity = '0'; }, 100);
+                setTimeout(() => {
+                    lightning.style.opacity = Math.random() * 0.2 + 0.1;
+                    setTimeout(() => { lightning.style.opacity = '0'; }, 150);
+                }, 100);
+                trigger();
+            }, delay);
+        };
+        trigger();
+    }
 
-        const video = current.querySelector('video');
+    function runEngine() {
+        slides.forEach(s => s.classList.remove('active'));
+        const slide = slides[currentIdx];
+        slide.classList.add('active');
+
+        const video = slide.querySelector('video');
         if (video) {
-            music.volume = 0.2;
+            // Fade music down for video
+            music.animate([{volume: 1}, {volume: 0.15}], {duration: 1000, fill: 'forwards'});
+            video.currentTime = 0;
             video.play();
-            video.onended = () => { music.volume = 1; next(); };
+            video.onended = () => {
+                music.animate([{volume: 0.15}, {volume: 1}], {duration: 1000, fill: 'forwards'});
+                advance();
+            };
         } else {
-            setTimeout(next, 6000);
+            // Photos stay for 6s - matching the beat of Walking in the Wind
+            setTimeout(advance, 6000);
         }
     }
 
-    function next() {
-        if (i < slides.length - 1) { i++; playSequence(); }
+    function advance() {
+        if (currentIdx < slides.length - 1) {
+            currentIdx++;
+            runEngine();
+        }
     }
 </script>
 </body>
