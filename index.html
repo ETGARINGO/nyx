@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mission Accomplished | Tactical Gallery</title>
+    <title>Mission Accomplished | Interactive Tactical HUD</title>
     <style>
         :root { 
             --gold: #d4af37; 
             --gold-glow: rgba(212, 175, 55, 0.8);
             --bg: #050505; 
-            --police-blue: rgba(0, 51, 102, 0.5);
-            --panel-bg: rgba(0, 20, 40, 0.8);
+            --police-blue: rgba(0, 51, 102, 0.3);
+            --panel-bg: rgba(0, 15, 30, 0.9);
         }
 
         body, html { 
@@ -22,7 +22,6 @@
             height: 100%; 
         }
 
-        /* Tactical HUD Background */
         #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.3; }
         .vignette { 
             position: fixed; inset: 0; 
@@ -33,55 +32,66 @@
         /* Layout Container */
         #main-layout {
             display: grid;
-            grid-template-columns: 250px 1fr;
+            grid-template-columns: 280px 1fr;
             height: 100vh;
-            gap: 20px;
-            padding: 20px;
+            gap: 15px;
+            padding: 15px;
             box-sizing: border-box;
             z-index: 20;
             position: relative;
         }
 
-        /* Sidebar: Digital Archive List */
+        /* Sidebar: Interactive Archive */
         #sidebar {
             border-right: 1px solid var(--police-blue);
-            overflow-y: hidden;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            padding-right: 15px;
+            gap: 10px;
+            padding-right: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gold) transparent;
         }
+
+        #sidebar::-webkit-scrollbar { width: 4px; }
+        #sidebar::-webkit-scrollbar-thumb { background: var(--gold); }
 
         .thumb-link {
             width: 100%;
-            height: 120px;
+            min-height: 100px;
             border: 1px solid var(--police-blue);
             background: var(--panel-bg);
-            opacity: 0;
-            transform: translateX(-50px);
-            transition: all 0.5s ease;
+            cursor: pointer;
+            transition: all 0.3s ease;
             overflow: hidden;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .thumb-link.visible {
-            opacity: 0.5;
-            transform: translateX(0);
+        .thumb-link:hover {
+            border-color: var(--gold);
+            transform: scale(1.02);
+            filter: brightness(1.2);
         }
 
         .thumb-link.active {
-            opacity: 1;
             border: 2px solid var(--gold);
             box-shadow: 0 0 15px var(--gold-glow);
+            opacity: 1 !important;
         }
 
-        .thumb-link img {
-            width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%);
+        .thumb-link img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+        .thumb-link.active img { opacity: 1; }
+
+        .thumb-label {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: rgba(0,0,0,0.7); font-size: 10px; padding: 2px 5px;
+            color: var(--gold);
         }
 
-        .thumb-link.active img { filter: grayscale(0%); }
-
-        /* Stage: Main Viewport */
+        /* Stage */
         #stage {
             position: relative;
             background: var(--panel-bg);
@@ -99,51 +109,44 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: 1s ease-in-out;
-            padding: 40px;
+            transition: opacity 0.8s ease-in-out;
+            padding: 20px;
+            pointer-events: none;
         }
 
         .slide.active { 
             opacity: 1; 
-            animation: scanIn 0.8s ease-out forwards;
+            pointer-events: auto;
+            animation: scanIn 0.6s ease-out forwards;
         }
 
         @keyframes scanIn {
-            from { clip-path: inset(0 100% 0 0); }
-            to { clip-path: inset(0 0 0 0); }
+            from { clip-path: inset(0 100% 0 0); filter: brightness(3); }
+            to { clip-path: inset(0 0 0 0); filter: brightness(1); }
         }
 
         .slide img, .slide video {
             max-width: 95%;
             max-height: 85vh;
-            border: 2px solid var(--gold);
+            border: 1px solid var(--gold);
             box-shadow: 0 0 30px rgba(0,0,0,1);
         }
 
-        /* Subtitles */
+        /* Subtitles & HUD */
         #lyric-container {
-            position: fixed;
-            bottom: 5%;
-            right: 5%;
-            width: 60%;
-            text-align: right;
-            z-index: 100;
+            position: fixed; bottom: 40px; right: 40px;
+            text-align: right; z-index: 100; max-width: 50%;
         }
 
         .subtitle-text {
-            font-size: 2.2rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            color: var(--gold);
-            text-shadow: 2px 2px 0px #000;
-            opacity: 0;
-            transition: 0.3s;
+            font-size: 2.5rem; font-weight: 900;
+            text-transform: uppercase; color: var(--gold);
+            text-shadow: 3px 3px 0px #000;
+            opacity: 0; transform: translateY(20px);
+            transition: 0.4s;
         }
 
-        .subtitle-text.active { opacity: 1; }
-
-        /* Final Box Styling */
-        .final-box h1 { font-size: 3.5rem; color: var(--gold); }
+        .subtitle-text.active { opacity: 1; transform: translateY(0); }
 
         /* Gate */
         #gate { 
@@ -156,6 +159,7 @@
         }
         .start-btn { 
             background: var(--gold); padding: 10px 30px; border: none; cursor: pointer; font-weight: bold;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -169,14 +173,13 @@
 <div id="gate">
     <div class="gate-card">
         <h1 style="color: var(--gold); margin:0;">SYSTEM AUTHORIZATION</h1>
-        <p style="letter-spacing: 3px; opacity: 0.7;">INITIALIZING PERSONNEL ARCHIVE</p>
-        <button class="start-btn" onclick="ignite()">START MISSION DEBRIEF</button>
+        <p style="letter-spacing: 3px; opacity: 0.7;">ACCESSING PERSONNEL ARCHIVE: NYX POSTRANO</p>
+        <button class="start-btn" onclick="ignite()">INITIALIZE HUD</button>
     </div>
 </div>
 
 <div id="main-layout">
-    <div id="sidebar">
-        </div>
+    <div id="sidebar"></div>
 
     <div id="stage">
         <div class="slide active"><img src="1.JPG"></div>
@@ -241,18 +244,27 @@
     const music = document.getElementById('bgMusic');
     const subtitle = document.getElementById('subtitle');
     let currentIdx = 0;
+    let timer;
 
-    // Build sidebar thumbnails
+    // Create Clickable Thumbnails
     slides.forEach((s, idx) => {
         const thumb = document.createElement('div');
         thumb.className = 'thumb-link';
+        thumb.onclick = () => jumpTo(idx);
+        
         const img = s.querySelector('img');
         if(img) {
             const clone = img.cloneNode();
             thumb.appendChild(clone);
         } else {
-            thumb.innerHTML = `<div style="padding:20px; font-size:10px;">VIDEO_FILE</div>`;
+            thumb.innerHTML = `<span style="font-size:10px;">VIDEO_LOG</span>`;
         }
+        
+        const label = document.createElement('div');
+        label.className = 'thumb-label';
+        label.innerText = `IMG_${idx+100}`;
+        thumb.appendChild(label);
+        
         sidebar.appendChild(thumb);
     });
 
@@ -266,14 +278,15 @@
         { time: 23, text: "If we're lost, don't call us..." },
         { time: 26, text: "Because you're officially off the clock!" },
         { time: 31, text: "Transferring to a new beat" },
+        { time: 35, text: "But the legend stays here" },
         { time: 46, text: "WALKING INTO THE NEW UNIT" },
         { time: 54, text: "YOU'LL BE GREATLY MISSED" },
-        { time: 65, text: "EVIDENCE OF A CAREER WELL SPENT" },
+        { time: 58, text: "ESPECIALLY BY THE RPRMD TEAM" },
         { time: 198, text: "SAFE TRAVELS, MA'AM GANDA 🫡" }
     ];
 
     particlesJS("particles-js", {
-        "particles": { "number": { "value": 60 }, "color": { "value": "#d4af37" }, "move": { "speed": 1 } }
+        "particles": { "number": { "value": 50 }, "color": { "value": "#d4af37" }, "move": { "speed": 0.8 } }
     });
 
     function ignite() {
@@ -294,6 +307,12 @@
         };
     }
 
+    function jumpTo(idx) {
+        clearTimeout(timer);
+        currentIdx = idx;
+        runEngine();
+    }
+
     function runEngine() {
         slides.forEach((s, i) => {
             s.classList.remove('active');
@@ -304,9 +323,6 @@
 
         slides[currentIdx].classList.add('active');
         thumbs[currentIdx].classList.add('active');
-        thumbs[currentIdx].classList.add('visible');
-        
-        // Scroll sidebar to current thumb
         thumbs[currentIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
 
         const video = slides[currentIdx].querySelector('video');
@@ -315,7 +331,7 @@
             video.play();
             video.onended = advance;
         } else {
-            setTimeout(advance, 4000);
+            timer = setTimeout(advance, 5000);
         }
     }
 
