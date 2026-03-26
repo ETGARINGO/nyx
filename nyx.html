@@ -2,49 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>The Homecoming Tribute | Cinematic Edition</title>
+    <title>The Journey Home | Officer Tribute</title>
     <style>
         :root { --gold: #d4af37; --bg: #050505; }
         body, html { margin: 0; padding: 0; background: var(--bg); color: white; font-family: 'Georgia', serif; overflow: hidden; height: 100%; }
 
-        /* Cinema Overlays */
-        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 30%, black 150%); z-index: 10; pointer-events: none; }
-        .film-grain { position: fixed; inset: 0; background: url('https://www.transparenttextures.com/patterns/stardust.png'); opacity: 0.1; z-index: 11; pointer-events: none; }
-
-        /* Start Screen */
+        /* Cinematic Effects */
+        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 40%, black 150%); z-index: 10; pointer-events: none; }
+        .film-grain { position: fixed; inset: 0; background: url('https://www.transparenttextures.com/patterns/stardust.png'); opacity: 0.12; z-index: 11; pointer-events: none; }
+        
+        /* Entrance Gate */
         #gate { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 2s ease-in-out; }
-        .gate-content { text-align: center; border: 1px solid var(--gold); padding: 60px; border-radius: 5px; background: rgba(10,10,10,0.8); }
-        .start-btn { margin-top: 30px; padding: 18px 60px; background: var(--gold); border: none; font-size: 1.3rem; cursor: pointer; font-weight: bold; letter-spacing: 3px; transition: 0.4s; }
-        .start-btn:hover { background: #fff; transform: scale(1.05); box-shadow: 0 0 30px var(--gold); }
+        .gate-content { text-align: center; border: 1px solid var(--gold); padding: 60px; border-radius: 4px; }
+        .start-btn { margin-top: 30px; padding: 18px 60px; background: var(--gold); border: none; font-size: 1.3rem; cursor: pointer; font-weight: bold; letter-spacing: 4px; transition: 0.4s; }
+        .start-btn:hover { background: #fff; transform: scale(1.05); box-shadow: 0 0 40px var(--gold); }
 
-        /* Animation Stage */
+        /* Stage and Slide Transitions */
         #stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-        .slide { position: absolute; inset: 0; opacity: 0; display: flex; align-items: center; justify-content: center; transition: opacity 2s ease-in-out; visibility: hidden; }
+        .slide { position: absolute; inset: 0; opacity: 0; display: flex; align-items: center; justify-content: center; transition: opacity 2.5s ease-in-out; visibility: hidden; }
         .slide.active { opacity: 1; visibility: visible; }
 
-        /* Ken Burns Cinematic Motion */
+        /* Outing Style Animation (Smooth Ken Burns) */
         .slide img { 
             max-width: 85%; max-height: 80vh; border: 1px solid #222; 
-            box-shadow: 0 0 60px rgba(0,0,0,1);
-            transform: scale(1.2); /* Start zoomed in */
-            transition: transform 8s ease-out; 
+            box-shadow: 0 0 80px rgba(0,0,0,1);
+            transform: scale(1.15) translate(1%, 1%); /* Starting Position */
+            transition: transform 9s ease-out; 
         }
-        .slide.active img { transform: scale(1.0); } /* Slowly zoom out */
+        .slide.active img { transform: scale(1.0) translate(0, 0); } /* Smooth Zoom Out */
         
-        video { max-width: 90%; max-height: 85vh; outline: 1px solid var(--gold); }
+        video { max-width: 90%; max-height: 85vh; outline: 1px solid var(--gold); box-shadow: 0 0 100px black; }
 
-        /* Subtitles/Captions */
+        /* Cinematic Captions */
         .caption { 
-            position: absolute; bottom: 10%; width: 100%; text-align: center; 
-            font-size: 1.6rem; font-style: italic; color: rgba(255,255,255,0.9);
-            text-shadow: 2px 2px 8px black; z-index: 20; opacity: 0; transition: 2s;
+            position: absolute; bottom: 12%; width: 100%; text-align: center; 
+            font-size: 1.8rem; font-style: italic; color: rgba(255,255,255,0.9);
+            text-shadow: 3px 3px 10px black; z-index: 20; opacity: 0; transition: 2s;
+            letter-spacing: 1px;
         }
         .active .caption { opacity: 1; }
 
-        /* Finale Box */
+        /* Finale Styling */
         .final-box { text-align: center; max-width: 900px; padding: 40px; }
-        .final-box h1 { font-size: 4.5rem; color: var(--gold); margin-bottom: 15px; font-weight: 100; letter-spacing: 8px; }
-        .final-box p { font-size: 2rem; line-height: 1.6; opacity: 0.8; }
+        .final-box h1 { font-size: 4.5rem; color: var(--gold); margin-bottom: 20px; font-weight: 100; letter-spacing: 10px; text-transform: uppercase; }
+        .final-box p { font-size: 2rem; line-height: 1.8; opacity: 0.8; font-style: normal; }
     </style>
 </head>
 <body>
@@ -53,8 +54,8 @@
 
 <div id="gate">
     <div class="gate-content">
-        <h1 style="letter-spacing: 10px; color: var(--gold); margin: 0;">OFFICER TRIBUTE</h1>
-        <p style="opacity: 0.6; margin-top: 10px;">A CINEMATIC JOURNEY HOME</p>
+        <h1 style="letter-spacing: 12px; color: var(--gold); margin: 0; font-weight: 100;">THE HOMECOMING</h1>
+        <p style="opacity: 0.5; margin-top: 15px; letter-spacing: 3px;">A TRIBUTE TO LEADERSHIP & MEMORIES</p>
         <button class="start-btn" onclick="ignite()">PLAY FILM</button>
     </div>
 </div>
@@ -63,10 +64,10 @@
 <div class="film-grain"></div>
 
 <div id="stage">
-    <div class="slide active"><img src="1.JPG"><div class="caption">The beginning of an incredible chapter.</div></div>
-    <div class="slide"><img src="10.JPEG"><div class="subtitle-area">Moments we'll always cherish.</div></div>
+    <div class="slide active"><img src="1.JPG"><div class="caption">Every journey starts with a single step.</div></div>
+    <div class="slide"><img src="10.JPEG"></div>
     <div class="slide"><img src="11.JPEG"></div>
-    <div class="slide"><img src="111.jpg"><div class="caption">Leading with heart.</div></div>
+    <div class="slide"><img src="111.jpg"><div class="caption">A leader we are proud to know.</div></div>
     <div class="slide"><img src="112.jpg"></div>
     <div class="slide"><img src="113.jpg"></div>
     <div class="slide"><img src="12.JPEG"></div>
@@ -77,8 +78,7 @@
     <div class="slide"><img src="17.JPEG"></div>
     <div class="slide"><img src="18.JPG"></div>
     <div class="slide"><img src="19.JPG"></div>
-    <div class="slide"><video src="2.MOV"></video></div>
-    <div class="slide"><img src="20.JPG"></div>
+    <div class="slide"><video src="2.MOV"></video></div> <div class="slide"><img src="20.JPG"></div>
     <div class="slide"><img src="21.JPEG"></div>
     <div class="slide"><img src="22.JPEG"></div>
     <div class="slide"><img src="23.JPEG"></div>
@@ -88,15 +88,13 @@
     <div class="slide"><img src="27.JPG"></div>
     <div class="slide"><img src="28.JPG"></div>
     <div class="slide"><img src="29.JPG"></div>
-    <div class="slide"><video src="3.MOV"></video></div>
-    <div class="slide"><img src="30.JPG"></div>
+    <div class="slide"><video src="3.MOV"></video></div> <div class="slide"><img src="30.JPG"></div>
     <div class="slide"><img src="31.JPEG"></div>
     <div class="slide"><img src="31.JPG"></div>
     <div class="slide"><img src="32.JPEG"></div>
     <div class="slide"><img src="33(1).JPEG"></div>
     <div class="slide"><img src="33.JPEG"></div>
-    <div class="slide"><video src="4.MOV"></video></div>
-    <div class="slide"><img src="5.JPEG"></div>
+    <div class="slide"><video src="4.MOV"></video></div> <div class="slide"><img src="5.JPEG"></div>
     <div class="slide"><img src="6.JPEG"></div>
     <div class="slide"><img src="7.JPEG"></div>
     <div class="slide"><img src="8.JPEG"></div>
@@ -106,8 +104,9 @@
         <div class="final-box">
             <h1>Welcome Home</h1>
             <p>Congratulations on your new assignment.<br>
-            While we miss you here, we are overjoyed you are home.<br>
-            Thank you for the leadership and the memories.</p>
+            While we will miss your presence here, we are overjoyed<br>
+            that you are returning to your hometown.<br>
+            Thank you for the memories and your service.</p>
         </div>
     </div>
 </div>
@@ -120,8 +119,10 @@
     function ignite() {
         document.getElementById('gate').style.opacity = '0';
         setTimeout(() => document.getElementById('gate').style.display = 'none', 2000);
-        music.play();
+        
+        // Ensure music starts perfectly
         music.volume = 1.0;
+        music.play();
         runShow();
     }
 
@@ -132,18 +133,32 @@
 
         const video = currentSlide.querySelector('video');
         if (video) {
-            // Smoothly lower background music for video clarity
-            music.animate([{volume: 1.0}, {volume: 0.15}], {duration: 1000, fill: 'forwards'});
+            // Smoothly Fade background music down during videos
+            fadeVolume(music, 1.0, 0.15, 1000);
             video.currentTime = 0;
             video.play();
             video.onended = () => {
-                music.animate([{volume: 0.15}, {volume: 1.0}], {duration: 1000, fill: 'forwards'});
+                // Smoothly Fade background music back up after videos
+                fadeVolume(music, 0.15, 1.0, 1000);
                 advance();
             };
         } else {
-            // Photos display for 6 seconds with smooth zoom
-            setTimeout(advance, 6000);
+            // Photos display for 7 seconds for a relaxed, professional feel
+            setTimeout(advance, 7000);
         }
+    }
+
+    // High-end volume transition logic
+    function fadeVolume(audio, start, end, duration) {
+        let startTime = null;
+        function step(timestamp) {
+            if (!startTime) startTime = timestamp;
+            let progress = (timestamp - startTime) / duration;
+            if (progress > 1) progress = 1;
+            audio.volume = start + (end - start) * progress;
+            if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
     }
 
     function advance() {
