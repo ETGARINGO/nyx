@@ -3,50 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Journey Home | Dynamic Tribute</title>
+    <title>The Journey Home | Cinematic Tribute</title>
     <style>
-        :root { --gold: #d4af37; --bg: #000; }
-        body, html { margin: 0; padding: 0; background: var(--bg); color: white; font-family: 'Segoe UI', serif; overflow: hidden; height: 100%; }
+        :root { 
+            --gold: #d4af37; 
+            --gold-light: #f1d592;
+            --bg: #050505; 
+        }
 
-        /* Lightning Overlay */
-        #lightning { position: fixed; inset: 0; background: white; z-index: 99; opacity: 0; pointer-events: none; mix-blend-mode: overlay; }
+        body, html { 
+            margin: 0; padding: 0; 
+            background: var(--bg); 
+            color: white; 
+            font-family: 'Times New Roman', serif; 
+            overflow: hidden; 
+            height: 100%; 
+        }
 
-        /* Cinematic Background Elements */
-        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 20%, black 150%); z-index: 10; pointer-events: none; }
-        .overlay-text { position: absolute; bottom: 8%; width: 100%; text-align: center; z-index: 20; text-shadow: 0 0 20px black; font-style: italic; font-size: 1.5rem; letter-spacing: 2px; opacity: 0.8; }
+        /* Particles Background */
+        #particles-js {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            opacity: 0.5;
+        }
 
-        /* Gate/Start Screen */
-        #gate { position: fixed; inset: 0; background: radial-gradient(circle, #111, #000); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .gate-card { border: 1px solid var(--gold); padding: 60px; text-align: center; border-radius: 4px; box-shadow: 0 0 50px rgba(212, 175, 55, 0.1); }
-        .start-btn { margin-top: 30px; padding: 15px 50px; background: transparent; border: 1px solid var(--gold); color: var(--gold); font-size: 1.2rem; cursor: pointer; letter-spacing: 5px; transition: 0.4s; }
-        .start-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 30px var(--gold); }
+        /* Lightning/Flash Effect */
+        #lightning { 
+            position: fixed; inset: 0; 
+            background: white; z-index: 999; 
+            opacity: 0; pointer-events: none; 
+        }
 
-        /* Main Engine */
-        #stage { position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .slide { position: absolute; inset: 0; opacity: 0; display: flex; align-items: center; justify-content: center; transition: opacity 2s ease-in-out; visibility: hidden; }
+        /* Cinematic Vignette */
+        .vignette { 
+            position: fixed; inset: 0; 
+            background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.9) 100%); 
+            z-index: 10; pointer-events: none; 
+        }
+
+        /* Premium Gate/Start Screen */
+        #gate { 
+            position: fixed; inset: 0; 
+            background: linear-gradient(45deg, #000, #1a1a1a);
+            z-index: 1000; display: flex; 
+            align-items: center; justify-content: center; 
+            transition: 2.5s cubic-bezier(0.7, 0, 0.3, 1); 
+        }
+
+        .gate-card { 
+            border: 1px solid rgba(212, 175, 55, 0.3); 
+            padding: 80px; text-align: center; 
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.02);
+            border-radius: 2px;
+        }
+
+        .start-btn { 
+            margin-top: 40px; padding: 18px 60px; 
+            background: transparent; border: 1px solid var(--gold); 
+            color: var(--gold); font-size: 1rem; cursor: pointer; 
+            letter-spacing: 8px; transition: 0.5s;
+            text-transform: uppercase;
+        }
+
+        .start-btn:hover { 
+            background: var(--gold); color: black; 
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.4); 
+        }
+
+        /* Stage & Slides */
+        #stage { 
+            position: relative; width: 100vw; height: 100vh; 
+            display: flex; align-items: center; justify-content: center; 
+        }
+
+        .slide { 
+            position: absolute; inset: 0; opacity: 0; 
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; 
+            transition: opacity 1.5s ease-in-out; visibility: hidden; 
+        }
+
         .slide.active { opacity: 1; visibility: visible; }
 
-        /* Dynamic Image Sizing */
-        .slide img { max-width: 90%; max-height: 85vh; object-fit: contain; box-shadow: 0 0 100px rgba(0,0,0,1); transform: scale(1.1); transition: transform 8s linear; }
-        .slide.active img { transform: scale(1.0); }
-        
-        video { max-width: 90%; max-height: 85vh; box-shadow: 0 0 100px black; border: 1px solid rgba(212, 175, 55, 0.3); }
+        /* Ken Burns Effect */
+        .slide img { 
+            max-width: 85%; max-height: 80vh; 
+            object-fit: contain; 
+            filter: drop-shadow(0 0 30px rgba(0,0,0,0.5));
+            transform: scale(1.1) translateY(0);
+        }
 
-        /* Finale Message */
-        .final-box h1 { font-size: 5rem; color: var(--gold); letter-spacing: 15px; margin-bottom: 20px; text-transform: uppercase; }
-        .final-box p { font-size: 1.8rem; line-height: 1.6; opacity: 0.7; }
+        .slide.active img { 
+            animation: kenburns 10s ease-out forwards;
+        }
+
+        @keyframes kenburns {
+            from { transform: scale(1.1) translateY(0); }
+            to { transform: scale(1.0) translateY(-10px); }
+        }
+
+        video { 
+            max-width: 90%; max-height: 80vh; 
+            border: 1px solid rgba(212, 175, 55, 0.2); 
+        }
+
+        /* Final Message Style */
+        .final-box h1 { 
+            font-size: clamp(3rem, 8vw, 6rem); 
+            background: linear-gradient(to bottom, var(--gold-light), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 20px; text-transform: uppercase; 
+            margin: 0;
+        }
+
+        .final-box p { 
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 200; letter-spacing: 4px;
+            opacity: 0.6; margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
+<div id="particles-js"></div>
 <div id="lightning"></div>
 <audio id="bgMusic" src="Walking in the Wind - One Direction (Lyrics) - Little Peach (128k).mp3" loop></audio>
 
 <div id="gate">
     <div class="gate-card">
-        <h1 style="letter-spacing: 12px; margin: 0; font-weight: 100; color: var(--gold);">WALKING IN THE WIND</h1>
-        <p style="opacity: 0.5; margin-top: 10px;">A TRIBUTE TO OUR OFFICER</p>
-        <button class="start-btn" onclick="ignite()">START JOURNEY</button>
+        <h1 style="letter-spacing: 15px; margin: 0; font-weight: 100; color: var(--gold);">WALKING IN THE WIND</h1>
+        <p style="opacity: 0.4; margin-top: 15px; letter-spacing: 3px;">A TRIBUTE TO OUR OFFICER</p>
+        <button class="start-btn" onclick="ignite()">Begin the Journey</button>
     </div>
 </div>
 
@@ -57,75 +147,61 @@
     <div class="slide"><img src="10.JPEG"></div>
     <div class="slide"><img src="11.JPEG"></div>
     <div class="slide"><img src="111.jpg"></div>
-    <div class="slide"><img src="112.jpg"></div>
-    <div class="slide"><img src="113.jpg"></div>
-    <div class="slide"><img src="12.JPEG"></div>
-    <div class="slide"><img src="13.JPEG"></div>
-    <div class="slide"><img src="14.JPEG"></div>
-    <div class="slide"><img src="15.JPEG"></div>
-    <div class="slide"><img src="16.JPEG"></div>
-    <div class="slide"><img src="17.JPEG"></div>
-    <div class="slide"><img src="18.JPG"></div>
-    <div class="slide"><img src="19.JPG"></div>
     <div class="slide"><video src="2.MOV"></video></div>
-    <div class="slide"><img src="20.JPG"></div>
-    <div class="slide"><img src="21.JPEG"></div>
-    <div class="slide"><img src="22.JPEG"></div>
-    <div class="slide"><img src="23.JPEG"></div>
-    <div class="slide"><img src="24.JPEG"></div>
-    <div class="slide"><img src="25.JPG"></div>
-    <div class="slide"><img src="26.JPG"></div>
-    <div class="slide"><img src="27.JPG"></div>
-    <div class="slide"><img src="28.JPG"></div>
-    <div class="slide"><img src="29.JPG"></div>
-    <div class="slide"><video src="3.MOV"></video></div>
-    <div class="slide"><img src="30.JPG"></div>
-    <div class="slide"><img src="31.JPEG"></div>
-    <div class="slide"><img src="31.JPG"></div>
-    <div class="slide"><img src="32.JPEG"></div>
-    <div class="slide"><img src="33(1).JPEG"></div>
-    <div class="slide"><img src="33.JPEG"></div>
     <div class="slide"><video src="4.MOV"></video></div>
-    <div class="slide"><img src="5.JPEG"></div>
-    <div class="slide"><img src="6.JPEG"></div>
-    <div class="slide"><img src="7.JPEG"></div>
-    <div class="slide"><img src="8.JPEG"></div>
     <div class="slide"><img src="9.JPEG"></div>
 
     <div class="slide">
         <div class="final-box" style="text-align: center;">
             <h1>Welcome Home</h1>
-            <p>Your journey is just beginning.<br>Best of luck in your hometown assignment.</p>
+            <p>A NEW CHAPTER BEGINS IN YOUR HOMETOWN</p>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
     const slides = document.querySelectorAll('.slide');
     const music = document.getElementById('bgMusic');
     const lightning = document.getElementById('lightning');
     let currentIdx = 0;
 
+    // Initialize Dust Particles
+    particlesJS("particles-js", {
+        "particles": {
+            "number": { "value": 80 },
+            "color": { "value": "#d4af37" },
+            "shape": { "type": "circle" },
+            "opacity": { "value": 0.2 },
+            "size": { "value": 2 },
+            "move": { "enable": true, "speed": 0.5, "direction": "top" }
+        }
+    });
+
     function ignite() {
+        document.getElementById('gate').style.transform = 'scale(1.2)';
         document.getElementById('gate').style.opacity = '0';
-        setTimeout(() => document.getElementById('gate').style.display = 'none', 2000);
+        setTimeout(() => document.getElementById('gate').style.display = 'none', 2500);
         
+        music.volume = 0;
         music.play();
+        // Fade in music
+        let vol = 0;
+        const fadeIn = setInterval(() => {
+            if (vol < 1) { vol += 0.05; music.volume = vol; }
+            else clearInterval(fadeIn);
+        }, 200);
+
         startLightning();
         runEngine();
     }
 
-    // Dynamic Lightning Logic
     function startLightning() {
         const trigger = () => {
-            const delay = Math.random() * 8000 + 2000; // Random delay between 2-10s
+            const delay = Math.random() * 10000 + 5000;
             setTimeout(() => {
-                lightning.style.opacity = Math.random() * 0.4 + 0.3;
-                setTimeout(() => { lightning.style.opacity = '0'; }, 100);
-                setTimeout(() => {
-                    lightning.style.opacity = Math.random() * 0.2 + 0.1;
-                    setTimeout(() => { lightning.style.opacity = '0'; }, 150);
-                }, 100);
+                lightning.style.opacity = '0.2';
+                setTimeout(() => { lightning.style.opacity = '0'; }, 50);
                 trigger();
             }, delay);
         };
@@ -137,19 +213,22 @@
         const slide = slides[currentIdx];
         slide.classList.add('active');
 
+        // Camera Shutter Flash effect on transition
+        lightning.style.opacity = '0.3';
+        setTimeout(() => { lightning.style.opacity = '0'; }, 150);
+
         const video = slide.querySelector('video');
         if (video) {
-            // Fade music down for video
-            music.animate([{volume: 1}, {volume: 0.15}], {duration: 1000, fill: 'forwards'});
+            music.animate([{volume: music.volume}, {volume: 0.1}], {duration: 1500, fill: 'forwards'});
             video.currentTime = 0;
             video.play();
             video.onended = () => {
-                music.animate([{volume: 0.15}, {volume: 1}], {duration: 1000, fill: 'forwards'});
+                music.animate([{volume: 0.1}, {volume: 1}], {duration: 1500, fill: 'forwards'});
                 advance();
             };
         } else {
-            // Photos stay for 6s - matching the beat of Walking in the Wind
-            setTimeout(advance, 6000);
+            // Stay on photo for 5 seconds
+            setTimeout(advance, 5000);
         }
     }
 
