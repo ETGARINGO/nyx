@@ -2,34 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Officer Surprise Presentation</title>
+    <title>Farewell & Tribute - Officer Presentation</title>
     <style>
-        body { margin: 0; background: #000; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
-        #start-screen { position: fixed; inset: 0; background: radial-gradient(circle, #222, #000); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; }
-        .btn-start { padding: 20px 50px; font-size: 2rem; cursor: pointer; background: #ffd700; border: none; border-radius: 50px; font-weight: bold; box-shadow: 0 0 20px rgba(255,215,0,0.4); transition: 0.3s; }
-        .btn-start:hover { transform: scale(1.1); background: #fff; }
+        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
         
-        .slide-container { position: relative; width: 100vw; height: 100vh; }
-        .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1s ease-in-out; display: flex; align-items: center; justify-content: center; }
-        .slide.active { opacity: 1; }
+        /* Start Overlay */
+        #start-overlay { position: fixed; inset: 0; background: #000; z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .start-btn { padding: 20px 40px; font-size: 24px; cursor: pointer; background: #c6a02e; border: none; border-radius: 8px; color: white; font-weight: bold; }
         
-        img, video { max-width: 95%; max-height: 90vh; object-fit: contain; box-shadow: 0 0 50px rgba(0,0,0,0.8); border: 2px solid #333; }
-        .caption { position: absolute; bottom: 20px; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 5px; font-size: 1.2rem; }
+        /* Slides */
+        .slide { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 1.5s; }
+        .slide.active { display: flex; opacity: 1; }
+        img, video { max-width: 90%; max-height: 85vh; border: 3px solid #333; border-radius: 5px; }
+        
+        /* Farewell Message Styling */
+        .farewell-text { text-align: center; padding: 40px; background: rgba(0,0,0,0.8); border: 2px solid #c6a02e; border-radius: 15px; }
+        h1 { color: #c6a02e; font-size: 3rem; margin-bottom: 20px; }
+        p { font-size: 1.8rem; line-height: 1.5; color: #eee; }
     </style>
 </head>
 <body>
 
-<div id="start-screen">
-    <h1 style="margin-bottom: 30px;">Officer's Special Celebration</h1>
-    <button class="btn-start" onclick="startPresentation()">START SURPRISE</button>
+<audio id="bgMusic" src="music.mp3" loop></audio>
+
+<div id="start-overlay">
+    <h1>Officer Tribute</h1>
+    <button class="start-btn" onclick="startShow()">Begin Presentation</button>
 </div>
 
-<audio id="bgMusic" loop>
-    <source src="music.mp3" type="audio/mpeg">
-</audio>
-
-<div class="slide-container" id="gallery">
+<div id="slideshow">
     <div class="slide active"><img src="1.JPG"></div>
     <div class="slide"><video src="2.MOV"></video></div>
     <div class="slide"><video src="3.MOV"></video></div>
@@ -68,53 +69,48 @@
     <div class="slide"><img src="111.jpg"></div>
     <div class="slide"><img src="112.jpg"></div>
     <div class="slide"><img src="113.jpg"></div>
+    
+    <div class="slide">
+        <div class="farewell-text">
+            <h1>Farewell & Best Wishes</h1>
+            <p>Congratulations on your new assignment.<br>
+            While we will deeply miss your leadership and friendship here,<br>
+            we are overjoyed that your journey is leading you back home.<br>
+            Thank you for your service and the memories we’ve shared.</p>
+        </div>
+    </div>
 </div>
 
 <script>
     const slides = document.querySelectorAll('.slide');
     const music = document.getElementById('bgMusic');
-    let current = 0;
-    let timer;
-    const imgDuration = 4000; // 4 seconds per image
+    let i = 0;
 
-    function startPresentation() {
-        document.getElementById('start-screen').style.display = 'none';
+    function startShow() {
+        document.getElementById('start-overlay').style.display = 'none';
         music.play();
-        runSlide();
+        showNext();
     }
 
-    function runSlide() {
+    function showNext() {
         slides.forEach(s => s.classList.remove('active'));
-        const activeSlide = slides[current];
-        activeSlide.classList.add('active');
+        const current = slides[i];
+        current.classList.add('active');
 
-        const video = activeSlide.querySelector('video');
-        
+        const video = current.querySelector('video');
         if (video) {
-            // It's a video: Lower music and wait for video to finish
-            music.volume = 0.15;
+            music.volume = 0.2;
             video.play();
-            video.onended = () => {
-                music.volume = 1.0;
-                nextSlide();
-            };
+            video.onended = () => { music.volume = 1; next(); };
         } else {
-            // It's an image: Show for set time
-            timer = setTimeout(nextSlide, imgDuration);
+            setTimeout(next, 4000);
         }
     }
 
-    function nextSlide() {
-        current++;
-        if (current < slides.length) {
-            runSlide();
-        } else {
-            // Loop back to start or show a final message
-            current = 0;
-            runSlide();
-        }
+    function next() {
+        i = (i + 1) % slides.length;
+        showNext();
     }
 </script>
-
 </body>
 </html>
