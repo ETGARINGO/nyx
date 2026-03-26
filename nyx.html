@@ -2,60 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>The Journey Home | Officer Tribute</title>
+    <title>The Homecoming Tribute | Goodbye My Friend</title>
     <style>
         :root { --gold: #d4af37; --bg: #050505; }
         body, html { margin: 0; padding: 0; background: var(--bg); color: white; font-family: 'Georgia', serif; overflow: hidden; height: 100%; }
 
-        /* Cinematic Effects */
+        /* Cinema Effects */
         .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 40%, black 150%); z-index: 10; pointer-events: none; }
         .film-grain { position: fixed; inset: 0; background: url('https://www.transparenttextures.com/patterns/stardust.png'); opacity: 0.12; z-index: 11; pointer-events: none; }
         
         /* Entrance Gate */
-        #gate { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 2s ease-in-out; }
+        #gate { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 2.5s ease-in-out; }
         .gate-content { text-align: center; border: 1px solid var(--gold); padding: 60px; border-radius: 4px; }
         .start-btn { margin-top: 30px; padding: 18px 60px; background: var(--gold); border: none; font-size: 1.3rem; cursor: pointer; font-weight: bold; letter-spacing: 4px; transition: 0.4s; }
-        .start-btn:hover { background: #fff; transform: scale(1.05); box-shadow: 0 0 40px var(--gold); }
+        .start-btn:hover { background: #fff; transform: scale(1.05); box-shadow: 0 0 50px var(--gold); }
 
         /* Stage and Slide Transitions */
         #stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-        .slide { position: absolute; inset: 0; opacity: 0; display: flex; align-items: center; justify-content: center; transition: opacity 2.5s ease-in-out; visibility: hidden; }
+        .slide { position: absolute; inset: 0; opacity: 0; display: flex; align-items: center; justify-content: center; transition: opacity 3s ease-in-out; visibility: hidden; }
         .slide.active { opacity: 1; visibility: visible; }
 
-        /* Outing Style Animation (Smooth Ken Burns) */
+        /* Outing Style Animation (Slow Pull-Back) */
         .slide img { 
             max-width: 85%; max-height: 80vh; border: 1px solid #222; 
-            box-shadow: 0 0 80px rgba(0,0,0,1);
-            transform: scale(1.15) translate(1%, 1%); /* Starting Position */
-            transition: transform 9s ease-out; 
+            box-shadow: 0 0 100px rgba(0,0,0,1);
+            transform: scale(1.15); 
+            transition: transform 10s linear; 
         }
-        .slide.active img { transform: scale(1.0) translate(0, 0); } /* Smooth Zoom Out */
+        .slide.active img { transform: scale(1.0); }
         
         video { max-width: 90%; max-height: 85vh; outline: 1px solid var(--gold); box-shadow: 0 0 100px black; }
 
-        /* Cinematic Captions */
-        .caption { 
-            position: absolute; bottom: 12%; width: 100%; text-align: center; 
-            font-size: 1.8rem; font-style: italic; color: rgba(255,255,255,0.9);
-            text-shadow: 3px 3px 10px black; z-index: 20; opacity: 0; transition: 2s;
-            letter-spacing: 1px;
-        }
-        .active .caption { opacity: 1; }
-
-        /* Finale Styling */
+        /* Cinematic Final Box */
         .final-box { text-align: center; max-width: 900px; padding: 40px; }
-        .final-box h1 { font-size: 4.5rem; color: var(--gold); margin-bottom: 20px; font-weight: 100; letter-spacing: 10px; text-transform: uppercase; }
-        .final-box p { font-size: 2rem; line-height: 1.8; opacity: 0.8; font-style: normal; }
+        .final-box h1 { font-size: 5rem; color: var(--gold); margin-bottom: 20px; font-weight: 100; letter-spacing: 12px; text-transform: uppercase; }
+        .final-box p { font-size: 2.2rem; line-height: 1.8; opacity: 0.9; font-style: italic; }
     </style>
 </head>
 <body>
 
-<audio id="bgMusic" src="audio.mp3" loop></audio>
+<audio id="bgMusic" src="audio.mp3"></audio>
 
 <div id="gate">
     <div class="gate-content">
-        <h1 style="letter-spacing: 12px; color: var(--gold); margin: 0; font-weight: 100;">THE HOMECOMING</h1>
-        <p style="opacity: 0.5; margin-top: 15px; letter-spacing: 3px;">A TRIBUTE TO LEADERSHIP & MEMORIES</p>
+        <h1 style="letter-spacing: 15px; color: var(--gold); margin: 0; font-weight: 100;">GOODBYE MY FRIEND</h1>
+        <p style="opacity: 0.5; margin-top: 15px; letter-spacing: 4px;">A TRIBUTE TO AN OFFICER'S JOURNEY</p>
         <button class="start-btn" onclick="ignite()">PLAY FILM</button>
     </div>
 </div>
@@ -64,10 +55,10 @@
 <div class="film-grain"></div>
 
 <div id="stage">
-    <div class="slide active"><img src="1.JPG"><div class="caption">Every journey starts with a single step.</div></div>
+    <div class="slide active"><img src="1.JPG"></div>
     <div class="slide"><img src="10.JPEG"></div>
     <div class="slide"><img src="11.JPEG"></div>
-    <div class="slide"><img src="111.jpg"><div class="caption">A leader we are proud to know.</div></div>
+    <div class="slide"><img src="111.jpg"></div>
     <div class="slide"><img src="112.jpg"></div>
     <div class="slide"><img src="113.jpg"></div>
     <div class="slide"><img src="12.JPEG"></div>
@@ -78,7 +69,8 @@
     <div class="slide"><img src="17.JPEG"></div>
     <div class="slide"><img src="18.JPG"></div>
     <div class="slide"><img src="19.JPG"></div>
-    <div class="slide"><video src="2.MOV"></video></div> <div class="slide"><img src="20.JPG"></div>
+    <div class="slide"><video src="2.MOV"></video></div>
+    <div class="slide"><img src="20.JPG"></div>
     <div class="slide"><img src="21.JPEG"></div>
     <div class="slide"><img src="22.JPEG"></div>
     <div class="slide"><img src="23.JPEG"></div>
@@ -88,13 +80,15 @@
     <div class="slide"><img src="27.JPG"></div>
     <div class="slide"><img src="28.JPG"></div>
     <div class="slide"><img src="29.JPG"></div>
-    <div class="slide"><video src="3.MOV"></video></div> <div class="slide"><img src="30.JPG"></div>
+    <div class="slide"><video src="3.MOV"></video></div>
+    <div class="slide"><img src="30.JPG"></div>
     <div class="slide"><img src="31.JPEG"></div>
     <div class="slide"><img src="31.JPG"></div>
     <div class="slide"><img src="32.JPEG"></div>
     <div class="slide"><img src="33(1).JPEG"></div>
     <div class="slide"><img src="33.JPEG"></div>
-    <div class="slide"><video src="4.MOV"></video></div> <div class="slide"><img src="5.JPEG"></div>
+    <div class="slide"><video src="4.MOV"></video></div>
+    <div class="slide"><img src="5.JPEG"></div>
     <div class="slide"><img src="6.JPEG"></div>
     <div class="slide"><img src="7.JPEG"></div>
     <div class="slide"><img src="8.JPEG"></div>
@@ -104,9 +98,8 @@
         <div class="final-box">
             <h1>Welcome Home</h1>
             <p>Congratulations on your new assignment.<br>
-            While we will miss your presence here, we are overjoyed<br>
-            that you are returning to your hometown.<br>
-            Thank you for the memories and your service.</p>
+            While we miss you here, we are overjoyed you've returned home.<br>
+            Thank you for being our leader and our friend.</p>
         </div>
     </div>
 </div>
@@ -118,9 +111,8 @@
 
     function ignite() {
         document.getElementById('gate').style.opacity = '0';
-        setTimeout(() => document.getElementById('gate').style.display = 'none', 2000);
+        setTimeout(() => document.getElementById('gate').style.display = 'none', 2500);
         
-        // Ensure music starts perfectly
         music.volume = 1.0;
         music.play();
         runShow();
@@ -133,22 +125,21 @@
 
         const video = currentSlide.querySelector('video');
         if (video) {
-            // Smoothly Fade background music down during videos
-            fadeVolume(music, 1.0, 0.15, 1000);
+            // FADE OUT music for video
+            fadeVolume(music, 1.0, 0.10, 1500);
             video.currentTime = 0;
             video.play();
             video.onended = () => {
-                // Smoothly Fade background music back up after videos
-                fadeVolume(music, 0.15, 1.0, 1000);
+                // FADE IN music after video
+                fadeVolume(music, 0.10, 1.0, 1500);
                 advance();
             };
         } else {
-            // Photos display for 7 seconds for a relaxed, professional feel
-            setTimeout(advance, 7000);
+            // Photos display for 8 seconds (Better for "Goodbye My Friend" tempo)
+            setTimeout(advance, 8000);
         }
     }
 
-    // High-end volume transition logic
     function fadeVolume(audio, start, end, duration) {
         let startTime = null;
         function step(timestamp) {
@@ -165,6 +156,14 @@
         if (idx < slides.length - 1) {
             idx++;
             runShow();
+        } else {
+            // Final Outro: Fade everything to black after the final message
+            setTimeout(() => {
+                document.body.style.transition = "5s";
+                document.body.style.backgroundColor = "black";
+                document.body.style.opacity = "0";
+                fadeVolume(music, 1.0, 0, 5000);
+            }, 10000);
         }
     }
 </script>
