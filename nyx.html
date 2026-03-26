@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tribute | Miss Nyx Postrano</title>
+    <title>Tribute to Miss Nyx Postrano</title>
     <style>
         :root { 
             --gold: #d4af37; 
-            --gold-glow: rgba(212, 175, 55, 0.4);
+            --gold-glow: rgba(212, 175, 55, 0.5);
             --bg: #050505; 
         }
 
@@ -20,103 +20,85 @@
             height: 100%; 
         }
 
-        /* Particles & Atmosphere */
-        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.3; }
+        /* Ambient Background */
+        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.35; }
         
-        .vignette { 
-            position: fixed; inset: 0; 
-            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.95) 100%); 
-            z-index: 10; pointer-events: none; 
-        }
+        /* Shutter & Vignette */
+        #shutter { position: fixed; inset: 0; background: white; z-index: 999; opacity: 0; pointer-events: none; }
+        .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 10%, rgba(0,0,0,0.9) 100%); z-index: 10; pointer-events: none; }
 
-        /* Cinematic Shutter Flash */
-        #shutter { 
-            position: fixed; inset: 0; 
-            background: white; z-index: 999; 
-            opacity: 0; pointer-events: none; 
-        }
-
-        /* Lyrics Layer */
-        #lyric-container {
+        /* Lyric Subtitles */
+        #lyric-box {
             position: fixed;
-            bottom: 12%;
+            bottom: 8%;
             width: 100%;
             text-align: center;
             z-index: 100;
             pointer-events: none;
         }
 
-        .lyric-text {
+        #subtitle {
             font-size: 1.8rem;
             font-style: italic;
-            letter-spacing: 2px;
             color: white;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+            text-shadow: 2px 2px 20px rgba(0,0,0,1);
             opacity: 0;
-            filter: blur(10px);
-            transition: all 0.8s ease;
+            transform: translateY(10px);
+            transition: all 0.6s ease;
+            display: inline-block;
+            padding: 5px 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
         }
 
-        .lyric-text.active {
-            opacity: 1;
-            filter: blur(0px);
-            transform: translateY(-10px);
-        }
+        #subtitle.visible { opacity: 1; transform: translateY(0); }
 
-        /* Intro Screen */
+        /* Gate / Intro */
         #gate { 
             position: fixed; inset: 0; 
             background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
-            z-index: 1000; display: flex; 
-            align-items: center; justify-content: center; 
-            transition: 2s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 1000; display: flex; align-items: center; justify-content: center; 
+            transition: 2.5s cubic-bezier(0.4, 0, 0.2, 1); 
         }
 
         .gate-card { 
-            text-align: center; padding: 60px;
-            border: 1px solid rgba(212, 175, 55, 0.1);
+            text-align: center; padding: 70px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
             background: rgba(255,255,255,0.02);
             backdrop-filter: blur(15px);
         }
 
         .start-btn { 
-            margin-top: 30px; padding: 18px 60px; 
+            margin-top: 40px; padding: 18px 65px; 
             background: transparent; border: 1px solid var(--gold); 
             color: var(--gold); font-size: 1rem; cursor: pointer; 
-            letter-spacing: 6px; transition: 0.5s; text-transform: uppercase;
+            letter-spacing: 7px; transition: 0.5s; text-transform: uppercase;
         }
 
-        .start-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 40px var(--gold-glow); }
+        .start-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 50px var(--gold-glow); }
 
-        /* Stage Engine */
+        /* Image Slide Engine */
         #stage { position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
-
-        .slide { 
-            position: absolute; inset: 0; opacity: 0; 
-            display: flex; align-items: center; justify-content: center; 
-            transition: opacity 1.5s ease-in-out; visibility: hidden; 
-        }
-
+        .slide { position: absolute; inset: 0; opacity: 0; display: flex; align-items: center; justify-content: center; transition: opacity 2s ease-in-out; visibility: hidden; }
         .slide.active { opacity: 1; visibility: visible; }
 
         .slide img { 
-            max-width: 85%; max-height: 80vh; 
-            object-fit: contain; 
-            filter: drop-shadow(0 0 50px black);
+            max-width: 80%; max-height: 80vh; object-fit: contain; 
+            filter: drop-shadow(0 10px 50px rgba(0,0,0,1));
             transform: scale(1.1);
         }
 
-        .slide.active img { animation: kenburns 12s linear forwards; }
+        .slide.active img { animation: cinematicZoom 6s linear forwards; }
 
-        @keyframes kenburns {
-            from { transform: scale(1.1) rotate(0.01deg); }
-            to { transform: scale(1.0) translateY(-15px) rotate(0.01deg); }
+        @keyframes cinematicZoom {
+            from { transform: scale(1.1) translateY(0); }
+            to { transform: scale(1.0) translateY(-10px); }
         }
 
-        video { max-width: 85%; max-height: 80vh; border: 1px solid rgba(212, 175, 55, 0.2); }
+        video { max-width: 85%; max-height: 85vh; border: 1px solid var(--gold); }
 
         .final-box h1 { 
-            font-size: 4rem; letter-spacing: 15px; text-transform: uppercase;
+            font-size: clamp(2.5rem, 6vw, 5.5rem); letter-spacing: 12px; text-transform: uppercase;
             background: linear-gradient(to bottom, #f1d592, #d4af37);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
@@ -128,15 +110,13 @@
 <div id="shutter"></div>
 <audio id="bgMusic" src="Walking in the Wind - One Direction (Lyrics) - Little Peach (128k).mp3"></audio>
 
-<div id="lyric-container">
-    <div id="lyric-text" class="lyric-text"></div>
-</div>
+<div id="lyric-box"><span id="subtitle"></span></div>
 
 <div id="gate">
     <div class="gate-card">
-        <h1 style="letter-spacing: 10px; color: var(--gold); margin-bottom: 5px;">WALKING IN THE WIND</h1>
-        <p style="opacity: 0.5; letter-spacing: 4px;">A TRIBUTE TO</p>
-        <h2 style="font-size: 2.5rem; color: var(--gold); margin: 10px 0;">MISS NYX POSTRANO</h2>
+        <h1 style="letter-spacing: 14px; font-weight: 100; color: var(--gold);">WALKING IN THE WIND</h1>
+        <p style="opacity: 0.6; letter-spacing: 5px;">A TRIBUTE TO</p>
+        <h2 style="font-size: 2.8rem; color: var(--gold);">MISS NYX POSTRANO</h2>
         <button class="start-btn" onclick="ignite()">Begin Journey</button>
     </div>
 </div>
@@ -185,9 +165,9 @@
 
     <div class="slide">
         <div class="final-box" style="text-align: center;">
-            <p style="letter-spacing: 10px;">WELCOME HOME</p>
+            <p>Welcome Home</p>
             <h1>MISS NYX POSTRANO</h1>
-            <p>Your new chapter begins now.</p>
+            <p>A new chapter begins today.</p>
         </div>
     </div>
 </div>
@@ -196,79 +176,75 @@
 <script>
     const slides = document.querySelectorAll('.slide');
     const music = document.getElementById('bgMusic');
+    const subtitle = document.getElementById('subtitle');
     const shutter = document.getElementById('shutter');
-    const lyricEl = document.getElementById('lyric-text');
     let currentIdx = 0;
 
-    // --- LYRIC SYNC DATA ---
-    // Adjust 'time' (seconds) to match the song's vocals exactly
-    const lyrics = [
-        { time: 2, text: "A tribute to our beloved officer" },
-        { time: 6, text: "Miss Nyx Postrano" },
-        { time: 12, text: "You'll find your way home..." },
-        { time: 16, text: "Walking in the wind" },
-        { time: 20, text: "We carry your stories with us" },
-        { time: 25, text: "The journey is just beginning" },
-        { time: 30, text: "A new chapter unfolds" }
-        // Add more lyrics here...
+    // --- LYRICS DATA ---
+    const lyricTimeline = [
+        { time: 2, text: "A week ago you said to me..." },
+        { time: 6, text: "Do you believe I'll ever be back?" },
+        { time: 11, text: "Miss Nyx, you're home now." },
+        { time: 16, text: "Walking in the wind..." },
+        { time: 21, text: "We carry your stories..." },
+        { time: 28, text: "Through the highs and lows." },
+        { time: 35, text: "Yesterday's a memory." },
+        { time: 42, text: "Every step brings a new light." },
+        { time: 190, text: "Welcome Home, Miss Nyx Postrano." }
     ];
 
     particlesJS("particles-js", {
         "particles": {
-            "number": { "value": 60 },
+            "number": { "value": 80 },
             "color": { "value": "#d4af37" },
-            "opacity": { "value": 0.2 },
-            "size": { "value": 2 },
-            "move": { "enable": true, "speed": 1, "direction": "top" }
+            "opacity": { "value": 0.3 },
+            "size": { "value": 1.2 },
+            "move": { "enable": true, "speed": 0.5, "direction": "top" }
         }
     });
 
     function ignite() {
         document.getElementById('gate').style.opacity = '0';
-        document.getElementById('gate').style.transform = 'scale(1.1)';
-        setTimeout(() => document.getElementById('gate').style.display = 'none', 2000);
-        
+        setTimeout(() => document.getElementById('gate').style.display = 'none', 2500);
         music.play();
         runEngine();
         
-        // Lyric Sync Monitor
+        // Lyric Sync Logic
         music.ontimeupdate = () => {
             const current = music.currentTime;
-            const active = lyrics.find((l, i) => 
-                current >= l.time && (!lyrics[i+1] || current < lyrics[i+1].time)
+            const active = lyricTimeline.find((l, i) => 
+                current >= l.time && (!lyricTimeline[i+1] || current < lyricTimeline[i+1].time)
             );
-            
-            if (active && lyricEl.innerText !== active.text) {
-                lyricEl.classList.remove('active');
+            if (active && subtitle.innerText !== active.text) {
+                subtitle.classList.remove('visible');
                 setTimeout(() => {
-                    lyricEl.innerText = active.text;
-                    lyricEl.classList.add('active');
-                }, 400);
+                    subtitle.innerText = active.text;
+                    subtitle.classList.add('visible');
+                }, 300);
             }
         };
     }
 
     function runEngine() {
         slides.forEach(s => s.classList.remove('active'));
-        const slide = slides[currentIdx];
-        slide.classList.add('active');
+        slides[currentIdx].classList.add('active');
         
-        // Shutter Flash
-        shutter.style.opacity = '0.4';
-        setTimeout(() => { shutter.style.opacity = '0'; }, 200);
+        // Shutter Flash Effect
+        shutter.style.opacity = '0.3';
+        setTimeout(() => shutter.style.opacity = '0', 200);
 
-        const video = slide.querySelector('video');
+        const video = slides[currentIdx].querySelector('video');
         if (video) {
-            music.animate([{volume: 1}, {volume: 0.15}], {duration: 1000, fill: 'forwards'});
+            music.volume = 0.15;
             video.currentTime = 0;
             video.play();
             video.onended = () => {
-                music.animate([{volume: 0.15}, {volume: 1}], {duration: 1000, fill: 'forwards'});
+                music.volume = 1;
                 advance();
             };
         } else {
-            // Photos stay for 6.5s to keep pace with a ballad
-            setTimeout(advance, 6500);
+            // Calculated timing: 202 seconds / 39 total slides ≈ 5100ms
+            setTimeout(advance, 5100);
         }
     }
 
