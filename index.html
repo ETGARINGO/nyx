@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Roast of Nyx | COMMAND CENTER V5</title>
+    <title>NYX POSTRANO | COMMAND CENTER V5</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root { 
             --gold: #d4af37; 
             --gold-glow: rgba(212, 175, 55, 0.8);
             --bg: #050505; 
-            --panel-bg: rgba(10, 10, 20, 0.9);
+            --police-blue: rgba(0, 51, 102, 0.2);
+            --panel-bg: rgba(0, 15, 30, 0.9);
             --alert-red: #ff3333;
             --font-main: 'Rajdhani', sans-serif;
             --font-header: 'Oswald', sans-serif;
@@ -35,95 +36,128 @@
             pointer-events: none; z-index: 999;
         }
 
-        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.3; pointer-events: none; }
-        
+        #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.3; }
         .vignette { 
             position: fixed; inset: 0; 
-            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.8) 100%); 
+            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.9) 100%); 
             z-index: 10; pointer-events: none; 
         }
 
-        /* Subtitles - Authored Style */
-        #lyric-container {
-            position: fixed; bottom: 8%; width: 100%;
-            text-align: center; z-index: 100;
+        /* Layout Container */
+        #main-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            height: 100vh;
+            gap: 15px;
+            padding: 15px;
+            box-sizing: border-box;
+            z-index: 20;
+            position: relative;
         }
 
-        .subtitle-text {
-            font-family: var(--font-header);
-            font-size: 3rem; font-weight: 700;
-            text-transform: uppercase;
-            color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.4);
-            opacity: 0; transform: translateY(20px);
-            transition: all 0.5s ease;
+        /* Sidebar: Interactive Archive */
+        #sidebar {
+            border-right: 1px solid var(--police-blue);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-right: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gold) transparent;
         }
 
-        .subtitle-text.active { opacity: 1; transform: translateY(0); }
+        .thumb-link {
+            width: 100%; min-height: 100px;
+            border: 1px solid var(--police-blue);
+            background: var(--panel-bg);
+            cursor: pointer; transition: all 0.3s ease;
+            overflow: hidden; position: relative;
+            display: flex; align-items: center; justify-content: center;
+        }
 
-        /* Hot Seat Alert - Tactical Upgrade */
+        .thumb-link:hover { border-color: var(--gold); transform: scale(1.02); }
+        .thumb-link.active { border: 2px solid var(--gold); box-shadow: 0 0 15px var(--gold-glow); }
+        .thumb-link.hot-seat-thumb { border-color: var(--alert-red); }
+        .thumb-link img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+        .thumb-link.active img { opacity: 1; }
+
+        /* Remarks/Hot Seat Overlay */
         .hot-seat-overlay {
-            position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
+            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
             background: var(--alert-red); color: white;
-            padding: 20px 40px; font-family: var(--font-header);
-            border: 4px solid white; box-shadow: 0 0 50px var(--alert-red);
+            padding: 15px 30px; font-family: var(--font-header);
+            border: 4px solid white; box-shadow: 0 0 40px var(--alert-red);
             text-transform: uppercase; font-size: 2.2rem; letter-spacing: 3px;
             animation: glitch-pulse 0.4s infinite;
             z-index: 500; display: none; text-align: center;
         }
 
         @keyframes glitch-pulse {
-            0% { transform: translateX(-50%) scale(1); filter: hue-rotate(0deg); }
-            50% { transform: translateX(-51%) scale(1.05); filter: hue-rotate(10deg); }
-            100% { transform: translateX(-49%) scale(1); filter: hue-rotate(0deg); }
+            0% { transform: translateX(-50%) scale(1); filter: contrast(1); }
+            50% { transform: translateX(-51%) scale(1.05); filter: contrast(1.2); }
+            100% { transform: translateX(-49%) scale(1); filter: contrast(1); }
         }
 
-        .icon-bounce { display: inline-block; animation: bounce 0.5s infinite alternate; }
+        .icon-bounce { display: inline-block; animation: bounce 0.5s infinite alternate; font-size: 2.5rem; margin: 0 10px; vertical-align: middle; }
         @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 
-        /* Gate Screen */
+        /* Stage */
+        #stage {
+            position: relative;
+            background: var(--panel-bg); border: 1px solid var(--police-blue);
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+        }
+
+        .slide {
+            position: absolute; inset: 0; opacity: 0;
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out; 
+            padding: 20px; pointer-events: none; transform: scale(1.1);
+        }
+
+        .slide.active { opacity: 1; pointer-events: auto; transform: scale(1); }
+
+        .slide img, .slide video {
+            max-width: 95%; max-height: 85vh;
+            border: 2px solid var(--gold); box-shadow: 0 0 30px rgba(0,0,0,1);
+            background: black;
+        }
+
+        /* Subtitles */
+        #lyric-container {
+            position: fixed; bottom: 40px; right: 40px;
+            text-align: right; z-index: 100; max-width: 50%;
+        }
+
+        .subtitle-text {
+            font-family: var(--font-header);
+            font-size: 2.8rem; font-weight: 700;
+            text-transform: uppercase; color: var(--gold);
+            text-shadow: 3px 3px 0px #000; opacity: 0; transition: 0.4s;
+        }
+
+        .subtitle-text.active { opacity: 1; }
+
+        /* Gate */
         #gate { 
             position: fixed; inset: 0; background: #000;
             z-index: 1000; display: flex; align-items: center; justify-content: center; 
-            transition: opacity 1s ease;
         }
-
         .gate-card { 
-            text-align: center; padding: 60px;
-            border: 1px solid var(--gold); background: var(--panel-bg);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 60px rgba(212, 175, 55, 0.2);
+            text-align: center; padding: 50px; border: 1px solid var(--gold); 
+            background: var(--panel-bg); backdrop-filter: blur(10px);
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
         }
-
         .start-btn { 
-            margin-top: 40px; padding: 15px 50px; 
-            background: var(--gold); border: none; 
-            font-family: var(--font-header);
-            color: black; font-weight: bold; font-size: 1.8rem; cursor: pointer; 
-            letter-spacing: 4px; text-transform: uppercase;
-            transition: 0.4s;
+            background: var(--gold); padding: 15px 40px; border: none; cursor: pointer; 
+            font-family: var(--font-header); font-weight: bold; font-size: 1.5rem;
+            margin-top: 30px; letter-spacing: 5px; text-transform: uppercase;
+            transition: 0.3s;
         }
+        .start-btn:hover { background: white; box-shadow: 0 0 20px white; }
 
-        .start-btn:hover { background: white; box-shadow: 0 0 30px white; letter-spacing: 8px; }
-
-        /* Stage */
-        #stage { position: relative; width: 100vw; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .slide { 
-            position: absolute; inset: 0; opacity: 0; 
-            display: flex; align-items: center; justify-content: center; 
-            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out; 
-            pointer-events: none; transform: scale(1.1);
-        }
-        .slide.active { opacity: 1; pointer-events: auto; transform: scale(1); }
-
-        .slide img, .slide video { 
-            max-width: 85%; max-height: 75vh; 
-            border: 2px solid var(--gold); padding: 5px; background: black;
-            box-shadow: 0 0 40px rgba(0,0,0,0.8);
-        }
-
-        /* Final Slide */
-        .final-box h1 { font-family: var(--font-header); font-size: 5rem; color: var(--gold); margin: 0; }
-        .final-box p { font-size: 1.5rem; letter-spacing: 4px; }
+        .final-box h1 { font-family: var(--font-header); font-size: 4rem; color: var(--gold); text-shadow: 0 0 20px var(--gold); margin: 10px 0; }
     </style>
 </head>
 <body>
@@ -134,80 +168,83 @@
 <audio id="laughTrack" src="laugh-track.mp3"></audio>
 <audio id="bgMusic" src="Walking in the Wind - One Direction (Lyrics) - Little Peach (128k).mp3"></audio>
 
-<div id="lyric-container">
-    <div id="subtitle" class="subtitle-text"></div>
-</div>
-
 <div id="gate">
     <div class="gate-card">
-        <h1 style="color: var(--gold); margin:0; font-family: 'Oswald'; font-size: 4rem; letter-spacing: 10px;">THE ROAST OF NYX</h1>
-        <p style="letter-spacing: 8px; opacity: 0.6;">RPRMD COMMAND CENTER | SECTION IX</p>
+        <h1 style="color: var(--gold); margin:0; font-family: 'Oswald'; font-size: 3.5rem; letter-spacing: 10px;">THE ROAST OF NYX</h1>
+        <p style="letter-spacing: 5px; opacity: 0.7;">SECTION IX PERSONNEL ARCHIVE | HOT SEAT READY</p>
         <button class="start-btn" onclick="ignite()">INITIALIZE ROAST</button>
     </div>
 </div>
 
-<div id="stage">
-    <div id="hotSeatTag" class="hot-seat-overlay">
-        ⚠️ <span class="icon-bounce">😂</span> BEST JUDGE EVER (HOT SEAT) <span class="icon-bounce">✌️</span> ⚠️
-    </div>
+<div id="main-layout">
+    <div id="sidebar"></div>
 
-    <div class="slide active"><img src="1.JPG"></div>
-    <div class="slide"><video src="2.MOV" muted></video></div>
-    <div class="slide"><video src="3.MOV" muted></video></div>
-    <div class="slide"><video src="4.MOV" muted></video></div>
-    <div class="slide"><img src="5.JPEG"></div>
-    <div class="slide"><img src="6.JPEG"></div>
-    <div class="slide"><img src="7.JPEG"></div>
-    <div class="slide"><img src="8.JPEG"></div>
-    <div class="slide"><img src="9.JPEG"></div>
-    <div class="slide"><img src="10.JPEG"></div>
-    <div class="slide"><img src="11.JPEG"></div>
-    <div class="slide"><img src="12.JPEG"></div>
-    <div class="slide"><img src="13.JPEG"></div>
-    <div class="slide"><img src="14.JPEG"></div>
-    <div class="slide"><img src="15.JPEG"></div>
-    <div class="slide"><img src="16.JPEG"></div>
-    <div class="slide"><img src="17.JPEG"></div>
-    <div class="slide"><img src="18.JPG"></div>
-    <div class="slide"><img src="19.JPG"></div>
-    <div class="slide"><img src="20.JPG"></div>
-    
-    <div class="slide"><img src="21.JPEG"></div> 
-    <div class="slide"><img src="22.JPEG"></div>
-    <div class="slide"><img src="23.JPEG"></div> 
-    <div class="slide"><img src="24.JPEG"></div> 
-    
-    <div class="slide"><img src="25.JPG"></div>
-    <div class="slide"><img src="26.JPG"></div>
-    <div class="slide"><img src="27.JPG"></div>
-    <div class="slide"><img src="28.JPG"></div>
-    <div class="slide"><img src="29.JPG"></div>
-    <div class="slide"><img src="30.JPG"></div>
-    <div class="slide"><img src="31.JPEG"></div>
-    <div class="slide"><img src="31.JPG"></div>
-    <div class="slide"><img src="32.JPEG"></div>
-    <div class="slide"><img src="33(1).JPEG"></div>
-    <div class="slide"><img src="33.JPEG"></div>
-    <div class="slide"><img src="111.jpg"></div>
-    <div class="slide"><img src="112.jpg"></div>
-    <div class="slide"><img src="113.jpg"></div>
+    <div id="stage">
+        <div id="hotSeatTag" class="hot-seat-overlay">
+            ⚠️ <span class="icon-bounce">😂</span> BEST JUDGE EVER (HOT SEAT) <span class="icon-bounce">✌️</span> ⚠️
+        </div>
 
-    <div class="slide">
-        <div class="final-box" style="text-align: center;">
-            <p style="letter-spacing: 15px; opacity: 0.5;">CASE CLOSED</p>
-            <h1>MA'AM NYX POSTRANO</h1>
-            <p style="color: var(--gold); font-style: italic; margin-top: 20px;">"New Unit, Same Legend."</p>
-            <div style="width: 100px; height: 2px; background: var(--gold); margin: 30px auto;"></div>
-            <p style="font-size: 1rem; opacity: 0.7; max-width: 600px;">
-                You've officially cleared the RPRMD audit. <br>Safe travels to your next assignment, Ma'am Ganda! 🫡
-            </p>
+        <div class="slide active"><img src="1.JPG"></div>
+        <div class="slide"><video src="2.MOV" muted></video></div>
+        <div class="slide"><video src="3.MOV" muted></video></div>
+        <div class="slide"><video src="4.MOV" muted></video></div>
+        <div class="slide"><img src="5.JPEG"></div>
+        <div class="slide"><img src="6.JPEG"></div>
+        <div class="slide"><img src="7.JPEG"></div>
+        <div class="slide"><img src="8.JPEG"></div>
+        <div class="slide"><img src="9.JPEG"></div>
+        <div class="slide"><img src="10.JPEG"></div>
+        <div class="slide"><img src="11.JPEG"></div>
+        <div class="slide"><img src="12.JPEG"></div>
+        <div class="slide"><img src="13.JPEG"></div>
+        <div class="slide"><img src="14.JPEG"></div>
+        <div class="slide"><img src="15.JPEG"></div>
+        <div class="slide"><img src="16.JPEG"></div>
+        <div class="slide"><img src="17.JPEG"></div>
+        <div class="slide"><img src="18.JPG"></div>
+        <div class="slide"><img src="19.JPG"></div>
+        <div class="slide"><img src="20.JPG"></div>
+        
+        <div class="slide"><img src="21.JPEG"></div> 
+        <div class="slide"><img src="22.JPEG"></div>
+        <div class="slide"><img src="23.JPEG"></div> 
+        <div class="slide"><img src="24.JPEG"></div> 
+        
+        <div class="slide"><img src="25.JPG"></div>
+        <div class="slide"><img src="26.JPG"></div>
+        <div class="slide"><img src="27.JPG"></div>
+        <div class="slide"><img src="28.JPG"></div>
+        <div class="slide"><img src="29.JPG"></div>
+        <div class="slide"><img src="30.JPG"></div>
+        <div class="slide"><img src="31.JPEG"></div>
+        <div class="slide"><img src="31.JPG"></div>
+        <div class="slide"><img src="32.JPEG"></div>
+        <div class="slide"><img src="33(1).JPEG"></div>
+        <div class="slide"><img src="33.JPEG"></div>
+        <div class="slide"><img src="111.jpg"></div>
+        <div class="slide"><img src="112.jpg"></div>
+        <div class="slide"><img src="113.jpg"></div>
+
+        <div class="slide">
+            <div class="final-box" style="text-align: center;">
+                <p style="letter-spacing: 12px; opacity: 0.7;">STATUS: MISSION ACCOMPLISHED</p>
+                <h1>MA'AM NYX POSTRANO</h1>
+                <p style="font-style: italic; color: var(--gold);">"New Unit, Same Legend."</p>
+                <div style="width: 80px; height: 2px; background: var(--gold); margin: 20px auto;"></div>
+                <p>SAFE TRAVELS, MA'AM GANDA! 🫡</p>
+            </div>
         </div>
     </div>
+</div>
+
+<div id="lyric-container">
+    <div id="subtitle" class="subtitle-text"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
     const slides = document.querySelectorAll('.slide');
+    const sidebar = document.getElementById('sidebar');
     const music = document.getElementById('bgMusic');
     const laughTrack = document.getElementById('laughTrack');
     const subtitle = document.getElementById('subtitle');
@@ -215,8 +252,27 @@
     let currentIdx = 0;
     let timer;
 
-    // INDICES FOR HOT SEAT (Slide 21, 23, 24)
+    // Hot Seat Indices (Array values match the index, 20 = 21st slide)
     const hotSeatIndices = [20, 22, 23];
+
+    // Build sidebar
+    slides.forEach((s, idx) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'thumb-link';
+        if(hotSeatIndices.includes(idx)) thumb.classList.add('hot-seat-thumb');
+        thumb.onclick = () => jumpTo(idx);
+        
+        const img = s.querySelector('img');
+        if(img) {
+            const clone = img.cloneNode();
+            thumb.appendChild(clone);
+        } else {
+            thumb.innerHTML = `<span style="font-size:10px;">VIDEO_LOG</span>`;
+        }
+        sidebar.appendChild(thumb);
+    });
+
+    const thumbs = document.querySelectorAll('.thumb-link');
 
     const lyrics = [
         { time: 0, text: "🚨 ALERT: JUDGE NYX IN THE BUILDING 🚨" },
@@ -225,18 +281,15 @@
         { time: 23, text: "If we're lost, don't call us..." },
         { time: 31, text: "Transferring to a new beat" },
         { time: 46, text: "WALKING INTO THE NEW UNIT" },
-        { time: 58, text: "But the roast will never end." },
-        { time: 105, text: "CASE CLOSED: SURVIVED THE RPRMD!" },
         { time: 198, text: "SAFE TRAVELS, MA'AM GANDA 🫡" }
     ];
 
     particlesJS("particles-js", {
-        "particles": { "number": { "value": 60 }, "color": { "value": "#d4af37" }, "opacity": { "value": 0.3 }, "move": { "speed": 1 } }
+        "particles": { "number": { "value": 60 }, "color": { "value": "#d4af37" }, "move": { "speed": 1 } }
     });
 
     function ignite() {
-        document.getElementById('gate').style.opacity = '0';
-        setTimeout(() => document.getElementById('gate').style.display = 'none', 1000);
+        document.getElementById('gate').style.display = 'none';
         music.play();
         runEngine();
         
@@ -253,13 +306,21 @@
         };
     }
 
+    function jumpTo(idx) {
+        clearTimeout(timer);
+        currentIdx = idx;
+        runEngine();
+    }
+
     function runEngine() {
-        slides.forEach(s => {
+        slides.forEach((s, i) => {
             s.classList.remove('active');
+            thumbs[i].classList.remove('active');
             const v = s.querySelector('video');
             if(v) v.pause();
         });
 
+        // Hot Seat Logic
         if (hotSeatIndices.includes(currentIdx)) {
             hotSeatTag.style.display = 'block';
             laughTrack.currentTime = 0;
@@ -269,6 +330,8 @@
         }
 
         slides[currentIdx].classList.add('active');
+        thumbs[currentIdx].classList.add('active');
+        thumbs[currentIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
 
         const video = slides[currentIdx].querySelector('video');
         if (video) {
@@ -276,7 +339,7 @@
             video.play();
             video.onended = advance;
         } else {
-            timer = setTimeout(advance, 4500); 
+            timer = setTimeout(advance, 5000);
         }
     }
 
