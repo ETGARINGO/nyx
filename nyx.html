@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Officer Surprise Party Slideshow</title>
+    <style>
+        body { margin: 0; background: #0a0a0a; color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        .slide-container { position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        
+        .slide { display: none; width: 100%; height: 100%; text-align: center; }
+        .slide.active { display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        
+        img, video { max-width: 95%; max-height: 85vh; border-radius: 8px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        
+        .controls { position: absolute; bottom: 30px; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 10; }
+        button { background: rgba(255,255,255,0.1); border: 1px solid white; color: white; padding: 10px 20px; cursor: pointer; border-radius: 5px; }
+        button:hover { background: white; color: black; }
+
+        .caption { margin-top: 15px; font-size: 1.2rem; font-weight: bold; letter-spacing: 1px; }
+        .progress { position: absolute; top: 0; left: 0; height: 4px; background: #ffd700; transition: width 0.3s; }
+    </style>
+</head>
+<body>
+
+<div class="progress" id="progressBar"></div>
+
+<div class="slide-container" id="gallery">
+    <div class="slide active" data-type="img"><img src="1.JPG"><div class="caption">1.JPG</div></div>
+    <div class="slide" data-type="video"><video src="2.MOV" controls></video><div class="caption">2.MOV</div></div>
+    <div class="slide" data-type="video"><video src="3.MOV" controls></video><div class="caption">3.MOV</div></div>
+    <div class="slide" data-type="video"><video src="4.MOV" controls></video><div class="caption">4.MOV</div></div>
+    <div class="slide" data-type="img"><img src="5.JPEG"><div class="caption">5.JPEG</div></div>
+    <div class="slide" data-type="img"><img src="111.jpg"><div class="caption">Our Officer</div></div>
+    </div>
+
+<div class="controls">
+    <button onclick="changeSlide(-1)">❮ Back</button>
+    <button onclick="changeSlide(1)">Next ❯</button>
+</div>
+
+<script>
+    let currentIdx = 0;
+    const slides = document.querySelectorAll('.slide');
+    const progress = document.getElementById('progressBar');
+
+    function changeSlide(dir) {
+        // Pause any playing video before moving
+        const currentVideo = slides[currentIdx].querySelector('video');
+        if (currentVideo) currentVideo.pause();
+
+        slides[currentIdx].classList.remove('active');
+        currentIdx = (currentIdx + dir + slides.length) % slides.length;
+        slides[currentIdx].classList.add('active');
+
+        // Play video automatically if it's a video slide
+        const nextVideo = slides[currentIdx].querySelector('video');
+        if (nextVideo) nextVideo.play();
+
+        // Update Progress Bar
+        progress.style.width = ((currentIdx + 1) / slides.length * 100) + "%";
+    }
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+        if (e.key === "ArrowRight") changeSlide(1);
+        if (e.key === "ArrowLeft") changeSlide(-1);
+    });
+</script>
+
+</body>
+</html>
