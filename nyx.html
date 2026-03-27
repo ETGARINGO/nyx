@@ -50,6 +50,17 @@
         #particles-js { position: fixed; inset: 0; z-index: 1; opacity: 0.4; }
         .vignette { position: fixed; inset: 0; background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.9) 100%); z-index: 10; pointer-events: none; }
 
+        /* Full Screen Button */
+        #fs-btn {
+            position: fixed; top: 25px; right: 25px; z-index: 1200;
+            background: rgba(0,0,0,0.6); border: 1px solid var(--gold);
+            color: var(--gold); padding: 10px 15px; cursor: pointer;
+            font-family: var(--font-header); font-size: 0.8rem; letter-spacing: 2px;
+            backdrop-filter: blur(5px); display: none;
+            transition: 0.3s;
+        }
+        #fs-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 15px var(--gold-glow); }
+
         #nav-icon {
             position: fixed; top: 25px; left: 25px; z-index: 1100;
             width: 70px; height: 70px; border: 2px solid var(--gold);
@@ -141,6 +152,8 @@
     </style>
 </head>
 <body>
+
+<button id="fs-btn" onclick="toggleFullScreen()">[ FULLSCREEN_MODE ]</button>
 
 <div id="nav-icon" onclick="jumpTo(0)">
     <img src="10.JPEG" alt="HQ_ICON">
@@ -251,11 +264,10 @@
     const hotSeatTag = document.getElementById('hotSeatTag');
     const recordPanel = document.getElementById('recordPanel');
     const navIcon = document.getElementById('nav-icon');
+    const fsBtn = document.getElementById('fs-btn');
     let currentIdx = 0;
     let timer;
 
-    // Total duration: 3:22 (202 seconds)
-    const totalTargetDuration = 202; 
     const hotSeatIndices = [20, 22, 23];
 
     slides.forEach((s, idx) => {
@@ -288,9 +300,30 @@
 
     particlesJS("particles-js", { "particles": { "number": { "value": 70 }, "color": { "value": "#d4af37" }, "move": { "speed": 1 } } });
 
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+            fsBtn.innerText = "[ EXIT_FULLSCREEN ]";
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+                fsBtn.innerText = "[ FULLSCREEN_MODE ]";
+            }
+        }
+    }
+
     function ignite() {
         document.getElementById('gate').style.display = 'none';
         navIcon.style.display = 'block';
+        fsBtn.style.display = 'block';
+        
+        // Auto-request fullscreen on start
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch(e => {
+                console.log("Full screen requires user gesture toggle.");
+            });
+        }
+        
         music.play();
         runEngine();
         
@@ -332,11 +365,8 @@
             video.play();
             video.onended = advance;
         } else {
-            // Timing logic: 202 seconds / 52 slides ~= 3.8s per slide.
-            // Adjusting slightly so closing slide stays longer.
             let slideDuration = 3600; 
-            if (currentIdx === slides.length - 1) slideDuration = 10000; // Stay on end slide
-            
+            if (currentIdx === slides.length - 1) slideDuration = 10000;
             timer = setTimeout(advance, slideDuration);
         }
     }
